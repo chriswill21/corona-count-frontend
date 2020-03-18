@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import React, {Component} from 'react';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
 // eslint-disable-next-line
 import logo from './logo.svg';
 import './App.css';
 import Home from './components/Home.js'
+import RetrieveProfileGoHome from "./Hooks/RetrieveProfileGoHome";
 import Login from './components/Login.js'
+import {useAuth0} from "./react-auth0-spa";
+import StartPage from "./components/StartPage";
 
 //function App() {
 //  return (
@@ -26,17 +29,38 @@ import Login from './components/Login.js'
 //    </div>
 //  );
 //}
-class App extends Component {
-  render() {
+// class App extends Component {
+//
+//     render() {
+//         return (
+//             <Router>
+//                 <div>
+//                     <Route path='/home' component={Home}/>
+//                     <Route path='/login' component={Login}/>
+//                 </div>
+//             </Router>
+//         );
+//     }
+// }
+
+function App() {
+    const {loading} = useAuth0();
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
-      <Router>
-        <div>
-          <Route path='/home' component={Home} />
-          <Route path='/login' component={Login} />
-        </div>
-      </Router>
+        <Router>
+            <div>
+                {/*<Route path='/home' component={Home}/>*/}
+                <Route path='/home' component={RetrieveProfileGoHome}/>
+
+                <Route path='/login' component={Login}/>
+                <Route path='/start' component={StartPage}/>
+            </div>
+        </Router>
     );
-  }
 }
 
 export default App;
