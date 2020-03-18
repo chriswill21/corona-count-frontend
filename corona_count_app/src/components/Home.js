@@ -6,12 +6,15 @@ import LogoutButton from "./LogoutButton";
 import axios from 'axios';
 import UserProfile from '../Hooks/RetrieveProfileGoHome'
 import config from '../url_config.json';
+import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
+import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 
 
 class Home extends React.Component {
     state = {
         bunkers: [],
-        user: null
+        user_name: null,
+        user_id: null
     }
 
     constructor(props) {
@@ -38,7 +41,8 @@ class Home extends React.Component {
             this.postNewUser(user);
         }
 
-        this.setState({user: user.name})
+        this.setState({user_name: user.name})
+        this.setState({user_id: id})
     }
 
     async postNewUser(user) {
@@ -46,16 +50,16 @@ class Home extends React.Component {
         console.log('here', url)
         const response = await axios.post(
             url,
-            {name: user.name, bunkers: []},
+            {name: user.user_name, bunkers: []},
             {headers: {'Content-Type': 'application/json'}}
         )
         console.log(response.data)
     }
 
-    componentWillReceiveProps(newProps) {
-        this.setState({bunkers: newProps.bunkers});
-        this.setState({user: UserProfile()})
-    }
+    // componentWillReceiveProps(newProps) {
+    //     this.setState({bunkers: newProps.bunkers});
+    //     this.setState({user: UserProfile()})
+    // }
 
 
     renderEmptyBunkerListItem = () => {
@@ -98,10 +102,32 @@ class Home extends React.Component {
         return (
             <div>
                 <Container>
-                    <Menu fixed='top' color={'teal'} inverted>
+                    <Menu fixed='top' color={'teal'} widths={3} inverted>
                         <Container>
                             <Menu.Item as='a' header>
-                                <Image size='mini' src='/logo.png' style={{marginRight: '1.5em'}}/>
+                                <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Bunker </Segment.Inline>}>
+                                    <Modal.Header>Add a new bunker, my guy</Modal.Header>
+                                    <Modal.Content>
+                                        <Segment stacked>
+                                            <Modal.Description>
+                                                <Header>Time is of the essence... get to safety!</Header>
+                                                <p>
+                                                    Create a bunker and invite your friends to stay safe and start
+                                                    slandering!
+                                                </p>
+                                            </Modal.Description>
+                                            <Divider/>
+                                            <Form.Input fluid icon='hand rock' iconPosition='left'
+                                                        placeholder='Bunker name'/>
+                                            <Divider/>
+                                            <Button color='teal' fluid size='large'>
+                                                Esketit
+                                            </Button>
+
+                                        </Segment>
+                                    </Modal.Content>
+                                </Modal>
+
                             </Menu.Item>
                             <Menu.Item header>
                                 It's shot o'clock, bitch!
