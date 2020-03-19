@@ -1,1 +1,1 @@
-# corona-count-frontent
+# corona-count-frontend
