@@ -1,3 +1,4 @@
 {
-  "users_url": "http://127.0.0.1:8082/api/users"
+  "users_url": "http://127.0.0.1:8082/api/users",
+  "bunkers_url": "http://127.0.0.1:8082/api/bunkers"
 }
