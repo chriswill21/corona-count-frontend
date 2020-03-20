@@ -9,6 +9,7 @@ import Login from './components/Login.js'
 import Bunker from "./components/Bunker";
 import {useAuth0} from "./react-auth0-spa";
 import StartPage from "./components/StartPage";
+import Redirect from "react-router-dom/es/Redirect";
 
 //function App() {
 //  return (
@@ -45,25 +46,29 @@ import StartPage from "./components/StartPage";
 // }
 
 function App() {
-    const {loading} = useAuth0();
+    const {isAuthenticated, loading} = useAuth0();
 
     if (loading) {
         return <div>Loading...</div>;
     }
-
+    
     return (
         <Router>
             <div>
-                {/*<Route path='/home' component={Home}/>*/}
                 <Switch>
-                    <Route path='/home' component={RetrieveProfileGoHome}/>
-                    <Route path='/login' component={Login}/>
-                    <Route path='/start' component={StartPage}/>
-                    <Route path='/bunker/:id' render={(props) => <Bunker {...props}/>}/>
+                    <Route path='/home' render={(props) => (isAuthenticated ? <RetrieveProfileGoHome {...props}/> :
+                        < Redirect to={"/start"}/>)}/>
+                    <Route path='/login'
+                           render={(props) => (isAuthenticated ? <Login {...props}/> : < Redirect to={"/start"}/>)}/>
+                    <Route path='/start' render={(props) => <StartPage {...props}/>}/>
+                    <Route path='/bunker/:id'
+                           render={(props) => (isAuthenticated ? <Bunker {...props}/> : < Redirect to={"/start"}/>)}/>
                 </Switch>
             </div>
         </Router>
     );
+
+
 }
 
 export default App;
