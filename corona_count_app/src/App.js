@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {BrowserRouter as Router, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 // eslint-disable-next-line
 import logo from './logo.svg';
 import './App.css';
 import Home from './components/Home.js'
 import RetrieveProfileGoHome from "./Hooks/RetrieveProfileGoHome";
 import Login from './components/Login.js'
+import Bunker from "./components/Bunker";
 import {useAuth0} from "./react-auth0-spa";
 import StartPage from "./components/StartPage";
 
@@ -54,10 +55,12 @@ function App() {
         <Router>
             <div>
                 {/*<Route path='/home' component={Home}/>*/}
-                <Route path='/home' component={RetrieveProfileGoHome}/>
-
-                <Route path='/login' component={Login}/>
-                <Route path='/start' component={StartPage}/>
+                <Switch>
+                    <Route path='/home' component={RetrieveProfileGoHome}/>
+                    <Route path='/login' component={Login}/>
+                    <Route path='/start' component={StartPage}/>
+                    <Route path='/bunker/:id' render={(props) => <Bunker {...props}/>}/>
+                </Switch>
             </div>
         </Router>
     );
