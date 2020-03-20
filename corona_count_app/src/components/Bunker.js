@@ -8,6 +8,7 @@ import UserProfile from '../Hooks/RetrieveProfileGoHome'
 import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
+import {Redirect} from "react-router-dom";
 
 class Bunker extends React.Component {
     state = {
@@ -36,13 +37,18 @@ class Bunker extends React.Component {
         user_obj: null,
         create_measure_form_text: null,
         create_measure_default_score: 0,
-        bunker_name: ""
+        bunker_name: "",
+        go_back: false
     }
 
     constructor(props) {
         super(props);
         // Set user upon return
         this.getBunker(this.props.location.state.bunker_id).then(r => this.__completeStateInitialization())
+    }
+
+    setGoBack = () => {
+        this.setState({go_back: true})
     }
 
     async createNewMeasure(name, default_score) {
@@ -150,50 +156,67 @@ class Bunker extends React.Component {
 
     render() {
         let measureDataForDisplay = this.genMeasureList()
-        return (
-            <div>
-                <Container>
-                    <Menu fixed='top' color={'teal'} widths={3} inverted>
-                        <Container>
-                            <Menu.Item as='a' header>
-                                <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure </Segment.Inline>}>
-                                    <Modal.Header>Add a new measure, dawggg</Modal.Header>
-                                    <Modal.Content>
-                                        <Segment stacked>
-                                            <Modal.Description>
-                                                {this.addBunkerModalHeader()}
-                                                <p>
-                                                    Just dooo it!... Create a new measure!
-                                                </p>
-                                            </Modal.Description>
-                                            <Divider/>
-                                            {this.addMeasureCard()}
-                                            <Divider/>
-                                            <Button color='teal' fluid size='large' onClick={this.__onAddMeasureClick}>
-                                                Esketit
-                                            </Button>
-                                        </Segment>
-                                    </Modal.Content>
-                                </Modal>
+        if (this.state.go_back) {
+            return (
+                < Redirect to={{pathname: "/home", state: {user: this.state.user_obj}}}/>
+            )
+        } else {
+            return (
+                <div>
+                    <Container>
+                        <Menu fixed='top' color={'teal'} widths={3} inverted>
+                            <Container>
+                                <Menu.Item as='a' header>
+                                    <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure
+                                    </Segment.Inline>}>
+                                        <Modal.Header>Add a new measure, dawggg</Modal.Header>
+                                        <Modal.Content>
+                                            <Segment stacked>
+                                                <Modal.Description>
+                                                    {this.addBunkerModalHeader()}
+                                                    <p>
+                                                        Just dooo it!... Create a new measure!
+                                                    </p>
+                                                </Modal.Description>
+                                                <Divider/>
+                                                {this.addMeasureCard()}
+                                                <Divider/>
+                                                <Button color='teal' fluid size='large'
+                                                        onClick={this.__onAddMeasureClick}>
+                                                    Esketit
+                                                </Button>
+                                            </Segment>
+                                        </Modal.Content>
+                                    </Modal>
 
-                            </Menu.Item>
-                            <Menu.Item header>
-                                {this.state.bunker_name}
-                            </Menu.Item>
-                            <Menu.Item as='a' position={"right"}>
-                                <LogoutButton/>
-                            </Menu.Item>
-                        </Container>
-                    </Menu>
-                </Container>
-                <Container text style={{marginTop: '45px'}}>
-                    <Segment inverted>
-                        <List divided inverted relaxed items={measureDataForDisplay}>
-                        </List>
-                    </Segment>
-                </Container>
-            </div>
-        )
+                                </Menu.Item>
+                                <Menu.Item header>
+                                    {this.state.bunker_name}
+                                </Menu.Item>
+                                <Menu.Item as='a' position={"right"}>
+                                    <Dropdown item icon='align justify' simple>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item onClick={this.setGoBack}>
+                                                Back to bunker
+                                            </Dropdown.Item>
+                                            <Dropdown.Item>
+                                                <LogoutButton/>
+                                            </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </Menu.Item>
+                            </Container>
+                        </Menu>
+                    </Container>
+                    <Container text style={{marginTop: '45px'}}>
+                        <Segment inverted>
+                            <List divided inverted relaxed items={measureDataForDisplay}>
+                            </List>
+                        </Segment>
+                    </Container>
+                </div>
+            )
+        }
     }
 }
 

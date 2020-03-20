@@ -245,7 +245,13 @@ class Home extends React.Component {
                                     It's shot o'clock, bitch!
                                 </Menu.Item>
                                 <Menu.Item as='a' position={"right"}>
-                                    <LogoutButton/>
+                                    <Dropdown item icon='align justify' simple>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item>
+                                                <LogoutButton/>
+                                            </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
                                 </Menu.Item>
                             </Container>
                         </Menu>
