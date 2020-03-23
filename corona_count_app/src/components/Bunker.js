@@ -122,7 +122,7 @@ class Bunker extends React.Component {
     renderEmptyMeasureListItem = () => {
         return (
             <List.Item>
-                <List.Icon name='github' size='large' verticalAlign='middle'/>
+                <List.Icon name='bug' size='large' verticalAlign='middle'/>
                 <List.Content>
                     <List.Header as='a'>You're in no measures!</List.Header>
                     <List.Description as='a'>...boringgggg...</List.Description>
@@ -134,7 +134,7 @@ class Bunker extends React.Component {
     renderMeasureListItem = (measure) => {
         return (
             <List.Item>
-                <List.Icon name='github' size='large' verticalAlign='middle'/>
+                <List.Icon name='bug' size='large' verticalAlign='middle'/>
                 <List.Content>
                     <List.Header as='a'>{measure.name}</List.Header>
                     <List.Description as='a'>Christien is #1</List.Description>
@@ -174,9 +174,9 @@ class Bunker extends React.Component {
                 <Grid divided='vertically'>
                         <Grid.Row columns={1}>
                             <Container>
-                                <Menu fixed='top' color={'#581845'} widths={3} inverted>
+                                <Menu fixed='top' color={'#581845'} inverted borderless>
                                     <Container>
-                                        <Menu.Item as='a' position={"right"}>
+                                        <Menu.Item position={"left"}>
                                             <Dropdown item icon='arrow circle left' simple>
                                                 <Dropdown.Menu>
                                                     <Dropdown.Item onClick={this.setGoBack}>
@@ -191,7 +191,7 @@ class Bunker extends React.Component {
                                         <Menu.Item header>
                                             {this.state.bunker_name}
                                         </Menu.Item>
-                                        <Menu.Item as='a' header>
+                                        <Menu.Item as='a' header position={"right"}>
                                             <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure
                                             </Segment.Inline>}>
                                                 <Modal.Header>Add a new measure, dawggg</Modal.Header>

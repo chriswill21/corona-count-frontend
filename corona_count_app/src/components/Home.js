@@ -227,9 +227,9 @@ class Home extends React.Component {
                     <Grid divided='vertically'>
                         <Grid.Row columns={1}>
                             <Container>
-                                <Menu fixed='top' color={'#581845'} widths={3} inverted>
+                                <Menu fixed='top' color={'#581845'} inverted borderless>
                                     <Container>
-                                        <Menu.Item as='a'>
+                                        <Menu.Item position={"left"}>
                                             <Dropdown item icon='align justify' simple>
                                                 <Dropdown.Menu>
                                                     <Dropdown.Item>
