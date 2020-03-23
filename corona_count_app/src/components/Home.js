@@ -117,9 +117,9 @@ class Home extends React.Component {
 
     __onAddBunkerClick = () => {
         if (this.state.add_bunker_tab === "join") {
-            this.joinBunker(this.state.join_bunker_form_text).then(r => console.log("Joined new bunker", r))
+            this.joinBunker(this.state.join_bunker_form_text).then(r => console.log("Attempt join new bunker", r))
         } else {
-            this.createNewBunker(this.state.create_bunker_form_text).then(r => console.log("Created new bunker", r))
+            this.createNewBunker(this.state.create_bunker_form_text).then(r => console.log("Attempt created new bunker", r))
         }
     }
 
@@ -196,16 +196,28 @@ class Home extends React.Component {
             let bunker_id = this.state.redirect_bunker_id
             let user_obj = this.state.user_obj
             return (
-                < Redirect to={{pathname: "/bunker/" + bunker_id, state: {user: user_obj, bunker_id: bunker_id}}}/>
+                < Redirect to={{pathname: "/bunker", state: {user: user_obj, bunker_id: bunker_id}}}/>
             )
 
         } else {
             return (
-                <div>
+                <div style={{backgroundColor: 'white', backgroundSize: "cover"}}>
                     <Container>
                         <Menu fixed='top' color={'teal'} widths={3} inverted>
                             <Container>
-                                <Menu.Item as='a' header>
+                                <Menu.Item as='a' >
+                                    <Dropdown item icon='align justify' simple>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item>
+                                                <LogoutButton/>
+                                            </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </Menu.Item>
+                                <Menu.Item header>
+                                    It's shot o'clock, bitch!
+                                </Menu.Item>
+                                <Menu.Item as='a' header position={"right"}>
                                     <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Bunker </Segment.Inline>}>
                                         <Modal.Header>Add a new bunker, my guy</Modal.Header>
                                         <Modal.Content>
@@ -240,18 +252,6 @@ class Home extends React.Component {
                                         </Modal.Content>
                                     </Modal>
 
-                                </Menu.Item>
-                                <Menu.Item header>
-                                    It's shot o'clock, bitch!
-                                </Menu.Item>
-                                <Menu.Item as='a' position={"right"}>
-                                    <Dropdown item icon='align justify' simple>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item>
-                                                <LogoutButton/>
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
                                 </Menu.Item>
                             </Container>
                         </Menu>

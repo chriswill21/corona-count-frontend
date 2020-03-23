@@ -166,6 +166,21 @@ class Bunker extends React.Component {
                     <Container>
                         <Menu fixed='top' color={'teal'} widths={3} inverted>
                             <Container>
+                                <Menu.Item as='a' position={"right"}>
+                                    <Dropdown item icon='arrow circle left' simple>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item onClick={this.setGoBack}>
+                                                Back to bunker
+                                            </Dropdown.Item>
+                                            <Dropdown.Item>
+                                                <LogoutButton/>
+                                            </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </Menu.Item>
+                                <Menu.Item header>
+                                    {this.state.bunker_name}
+                                </Menu.Item>
                                 <Menu.Item as='a' header>
                                     <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure
                                     </Segment.Inline>}>
@@ -189,21 +204,6 @@ class Bunker extends React.Component {
                                         </Modal.Content>
                                     </Modal>
 
-                                </Menu.Item>
-                                <Menu.Item header>
-                                    {this.state.bunker_name}
-                                </Menu.Item>
-                                <Menu.Item as='a' position={"right"}>
-                                    <Dropdown item icon='align justify' simple>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item onClick={this.setGoBack}>
-                                                Back to bunker
-                                            </Dropdown.Item>
-                                            <Dropdown.Item>
-                                                <LogoutButton/>
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
                                 </Menu.Item>
                             </Container>
                         </Menu>
