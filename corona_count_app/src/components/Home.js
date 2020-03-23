@@ -152,10 +152,22 @@ class Home extends React.Component {
         }
     }
 
+    renderBlankBunkerListItem = () => {
+        return (
+            <List.Item>
+                <List.Icon name='certificate' size='large' verticalAlign='middle'/>
+                <List.Content>
+                    <List.Header as='a'> </List.Header>
+                    <List.Description as='a'> </List.Description>
+                </List.Content>
+            </List.Item>
+        );
+    }
+
     renderEmptyBunkerListItem = () => {
         return (
             <List.Item>
-                <List.Icon name='github' size='large' verticalAlign='middle'/>
+                <List.Icon name='certificate' size='large' verticalAlign='middle'/>
                 <List.Content>
                     <List.Header as='a'>You're in no bunkers!</List.Header>
                     <List.Description as='a'>Get to safety</List.Description>
@@ -168,7 +180,7 @@ class Home extends React.Component {
             <List.Item onClick={() => {
                 this.setRedirect(bunker)
             }}>
-                <List.Icon name='github' size='large' verticalAlign='middle'/>
+                <List.Icon name='certificate' size='large' verticalAlign='middle'/>
                 <List.Content>
                     <List.Header as='a'>{bunker.name}</List.Header>
                 </List.Content>
@@ -183,6 +195,7 @@ class Home extends React.Component {
         } else {
             this.state.bunkers.forEach(bunker => data.push(this.renderBunkerListItem(bunker)))
         }
+
         return data
     };
 
@@ -201,67 +214,87 @@ class Home extends React.Component {
 
         } else {
             return (
-                <div style={{backgroundColor: 'white', backgroundSize: "cover"}}>
-                    <Container>
-                        <Menu fixed='top' color={'teal'} widths={3} inverted>
-                            <Container>
-                                <Menu.Item as='a' >
-                                    <Dropdown item icon='align justify' simple>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item>
-                                                <LogoutButton/>
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </Menu.Item>
-                                <Menu.Item header>
-                                    It's shot o'clock, bitch!
-                                </Menu.Item>
-                                <Menu.Item as='a' header position={"right"}>
-                                    <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Bunker </Segment.Inline>}>
-                                        <Modal.Header>Add a new bunker, my guy</Modal.Header>
-                                        <Modal.Content>
-                                            <Segment stacked>
-                                                <Modal.Description>
-                                                    {this.addBunkerModalHeader()}
-                                                    <p>
-                                                        Create a bunker and invite your friends to stay safe and start
-                                                        slandering!
-                                                    </p>
-                                                </Modal.Description>
-                                                <Divider/>
-                                                <Menu tabular>
-                                                    <Menu.Item
-                                                        name='join'
-                                                        active={this.state.add_bunker_tab === "join"}
-                                                        onClick={this.handleItemClick}
-                                                    />
-                                                    <Menu.Item
-                                                        name='create'
-                                                        active={this.state.add_bunker_tab === "create"}
-                                                        onClick={this.handleItemClick}
-                                                    />
-                                                </Menu>
-                                                {this.addBunkerCard()}
-                                                <Divider/>
-                                                <Button color='teal' fluid size='large'
-                                                        onClick={this.__onAddBunkerClick}>
-                                                    Esketit
-                                                </Button>
-                                            </Segment>
-                                        </Modal.Content>
-                                    </Modal>
 
-                                </Menu.Item>
+                <div class="full-height" style={{
+                    backgroundColor: '#900C3F ',
+                    backgroundSize: "cover",
+                    top: '0',
+                    bottom: '0',
+                    left: '0',
+                    right: '0',
+                    position: 'absolute'
+                }}>
+                    <Grid divided='vertically'>
+                        <Grid.Row columns={1}>
+                            <Container>
+                                <Menu fixed='top' color={'#581845'} widths={3} inverted>
+                                    <Container>
+                                        <Menu.Item as='a'>
+                                            <Dropdown item icon='align justify' simple>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item>
+                                                        <LogoutButton/>
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </Menu.Item>
+                                        <Menu.Item header>
+                                            It's shot o'clock, bitch!
+                                        </Menu.Item>
+                                        <Menu.Item as='a' header position={"right"}>
+                                            <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Bunker
+                                            </Segment.Inline>}>
+                                                <Modal.Header>Add a new bunker, my guy</Modal.Header>
+                                                <Modal.Content>
+                                                    <Segment vertical>
+                                                        <Modal.Description>
+                                                            {this.addBunkerModalHeader()}
+                                                            <p>
+                                                                Create a bunker and invite your friends to stay safe and
+                                                                start
+                                                                slandering!
+                                                            </p>
+                                                        </Modal.Description>
+                                                        <Divider/>
+                                                        <Menu tabular>
+                                                            <Menu.Item
+                                                                name='join'
+                                                                active={this.state.add_bunker_tab === "join"}
+                                                                onClick={this.handleItemClick}
+                                                            />
+                                                            <Menu.Item
+                                                                name='create'
+                                                                active={this.state.add_bunker_tab === "create"}
+                                                                onClick={this.handleItemClick}
+                                                            />
+                                                        </Menu>
+                                                        {this.addBunkerCard()}
+                                                        <Divider/>
+                                                        <Button color='#581845' fluid size='large'
+                                                                onClick={this.__onAddBunkerClick}>
+                                                            Esketit
+                                                        </Button>
+                                                    </Segment>
+                                                </Modal.Content>
+                                            </Modal>
+
+                                        </Menu.Item>
+                                    </Container>
+                                </Menu>
                             </Container>
-                        </Menu>
-                    </Container>
-                    <Container text style={{marginTop: '45px'}}>
-                        <Segment inverted>
-                            <List divided inverted relaxed items={bunkerDataForDisplay}>
-                            </List>
-                        </Segment>
-                    </Container>
+                        </Grid.Row>
+
+                        <Grid.Row columns={1}>
+                            <Container text style={{marginTop: '38px'}}>
+                                <Segment vertical>
+                                    <List divided inverted relaxed items={bunkerDataForDisplay}>
+                                    </List>
+                                </Segment>
+                            </Container>
+                        </Grid.Row>
+                    </Grid>
+
+
                 </div>
             )
         }

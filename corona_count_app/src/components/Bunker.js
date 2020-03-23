@@ -162,58 +162,75 @@ class Bunker extends React.Component {
             )
         } else {
             return (
-                <div>
-                    <Container>
-                        <Menu fixed='top' color={'teal'} widths={3} inverted>
+                <div className="full-height" style={{
+                    backgroundColor: '#900C3F ',
+                    backgroundSize: "cover",
+                    top: '0',
+                    bottom: '0',
+                    left: '0',
+                    right: '0',
+                    position: 'absolute'
+                }}>
+                <Grid divided='vertically'>
+                        <Grid.Row columns={1}>
                             <Container>
-                                <Menu.Item as='a' position={"right"}>
-                                    <Dropdown item icon='arrow circle left' simple>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item onClick={this.setGoBack}>
-                                                Back to bunker
-                                            </Dropdown.Item>
-                                            <Dropdown.Item>
-                                                <LogoutButton/>
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </Menu.Item>
-                                <Menu.Item header>
-                                    {this.state.bunker_name}
-                                </Menu.Item>
-                                <Menu.Item as='a' header>
-                                    <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure
-                                    </Segment.Inline>}>
-                                        <Modal.Header>Add a new measure, dawggg</Modal.Header>
-                                        <Modal.Content>
-                                            <Segment stacked>
-                                                <Modal.Description>
-                                                    {this.addBunkerModalHeader()}
-                                                    <p>
-                                                        Just dooo it!... Create a new measure!
-                                                    </p>
-                                                </Modal.Description>
-                                                <Divider/>
-                                                {this.addMeasureCard()}
-                                                <Divider/>
-                                                <Button color='teal' fluid size='large'
-                                                        onClick={this.__onAddMeasureClick}>
-                                                    Esketit
-                                                </Button>
-                                            </Segment>
-                                        </Modal.Content>
-                                    </Modal>
+                                <Menu fixed='top' color={'#581845'} widths={3} inverted>
+                                    <Container>
+                                        <Menu.Item as='a' position={"right"}>
+                                            <Dropdown item icon='arrow circle left' simple>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item onClick={this.setGoBack}>
+                                                        Back to bunker
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item>
+                                                        <LogoutButton/>
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </Menu.Item>
+                                        <Menu.Item header>
+                                            {this.state.bunker_name}
+                                        </Menu.Item>
+                                        <Menu.Item as='a' header>
+                                            <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure
+                                            </Segment.Inline>}>
+                                                <Modal.Header>Add a new measure, dawggg</Modal.Header>
+                                                <Modal.Content>
+                                                    <Segment vertical>
+                                                        <Modal.Description>
+                                                            {this.addBunkerModalHeader()}
+                                                            <p>
+                                                                Just dooo it!... Create a new measure!
+                                                            </p>
+                                                        </Modal.Description>
+                                                        <Divider/>
+                                                        {this.addMeasureCard()}
+                                                        <Divider/>
+                                                        <Button color='#581845' fluid size='large'
+                                                                onClick={this.__onAddMeasureClick}>
+                                                            Esketit
+                                                        </Button>
+                                                    </Segment>
+                                                </Modal.Content>
+                                            </Modal>
 
-                                </Menu.Item>
+                                        </Menu.Item>
+                                    </Container>
+                                </Menu>
                             </Container>
-                        </Menu>
-                    </Container>
-                    <Container text style={{marginTop: '45px'}}>
-                        <Segment inverted>
-                            <List divided inverted relaxed items={measureDataForDisplay}>
-                            </List>
-                        </Segment>
-                    </Container>
+                        </Grid.Row>
+
+                        <Grid.Row columns={1}>
+                            <Container text style={{marginTop: '38px'}}>
+                                <Segment vertical>
+                                    <List divided inverted relaxed items={measureDataForDisplay}>
+                                    </List>
+                                </Segment>
+                            </Container>
+                        </Grid.Row>
+                    </Grid>
+
+
                 </div>
             )
         }
