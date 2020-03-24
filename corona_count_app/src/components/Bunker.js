@@ -1,6 +1,6 @@
 import React from 'react'
 // eslint-disable-next-line
-import {List, Segment, Dropdown, Menu, Container, Image, Divider, Grid, Header, Form, Button} from 'semantic-ui-react'
+import {List, Segment, Dropdown, Menu, Container, Image, Divider, Grid as SUI_Grid, Header, Form, Button} from 'semantic-ui-react'
 import {useAuth0} from "../react-auth0-spa";
 import LogoutButton from "./LogoutButton";
 import axios from 'axios';
@@ -9,6 +9,12 @@ import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {Redirect} from "react-router-dom";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import Flexbox from 'flexbox-react';
+import MUI_Grid from '@material-ui/core/Grid';
+
 
 class Bunker extends React.Component {
     state = {
@@ -77,6 +83,7 @@ class Bunker extends React.Component {
                 await axios.get(url)
             console.log("Retrieved bunker data: ", response.data.bunker)
             this.setState({bunker: response.data.bunker})
+            this.setState({measures: response.data.bunker.measures})
             // return response.data.bunker
         } catch (e) {
             console.log(e => console.log("Bunker doesn't exist"))
@@ -92,10 +99,6 @@ class Bunker extends React.Component {
 
     __onCreateMeasureNameFormChange = (value) => {
         this.setState({create_measure_form_text: value})
-    }
-
-    __onCreateMeasureDefaultScoreChange = (value) => {
-        this.setState({create_measure_default_score: value})
     }
 
     __onAddMeasureClick = () => {
@@ -133,13 +136,31 @@ class Bunker extends React.Component {
 
     renderMeasureListItem = (measure) => {
         return (
-            <List.Item>
-                <List.Icon name='bug' size='large' verticalAlign='middle'/>
-                <List.Content>
-                    <List.Header as='a'>{measure.name}</List.Header>
-                    <List.Description as='a'>Christien is #1</List.Description>
-                </List.Content>
-            </List.Item>
+            // <List.Item>
+            //     <List.Icon name='bug' size='large' verticalAlign='middle'/>
+            //     <List.Content>
+            //         <List.Header as='a'>{measure.name}</List.Header>
+            //         <List.Description as='a'>Christien is #1</List.Description>
+            //     </List.Content>
+            // </List.Item>
+            <Card>
+                <CardContent>
+                    <Typography color="textSecondary" gutterBottom>
+                        {measure.name}
+                    </Typography>
+                    <Typography variant="h5" component="h2">
+                        hello
+                    </Typography>
+                    <Typography color="textSecondary" gutterBottom>
+                        adjective
+                    </Typography>
+                    <Typography variant="body2" component="p">
+                        well meaning and kindly.
+                        <br/>
+                        {'"a benevolent smile"'}
+                    </Typography>
+                </CardContent>
+            </Card>
         );
     }
 
@@ -171,8 +192,8 @@ class Bunker extends React.Component {
                     right: '0',
                     position: 'absolute'
                 }}>
-                <Grid divided='vertically'>
-                        <Grid.Row columns={1}>
+                    <SUI_Grid divided='vertically'>
+                        <SUI_Grid.Row columns={1}>
                             <Container>
                                 <Menu fixed='top' color={'#581845'} inverted borderless>
                                     <Container>
@@ -218,19 +239,28 @@ class Bunker extends React.Component {
                                     </Container>
                                 </Menu>
                             </Container>
-                        </Grid.Row>
+                        </SUI_Grid.Row>
 
-                        <Grid.Row columns={1}>
-                            <Container text style={{marginTop: '38px'}}>
-                                <Segment vertical>
-                                    <List divided inverted relaxed items={measureDataForDisplay}>
-                                    </List>
-                                </Segment>
-                            </Container>
-                        </Grid.Row>
-                    </Grid>
-
-
+                        <SUI_Grid.Row columns={1}>
+                            {/*<Container text style={{marginTop: '38px'}}>*/}
+                                {/*<Segment vertical>*/}
+                                {/*    <List divided inverted relaxed items={measureDataForDisplay}>*/}
+                                {/*    </List>*/}
+                                {/*</Segment>*/}
+                                <MUI_Grid container spacing={5} style={{marginTop: '48px'}}>
+                                    <MUI_Grid item xs={12}>
+                                        <MUI_Grid container justify="center" spacing={4}>
+                                            {measureDataForDisplay.map(value => (
+                                                <MUI_Grid key={value} item>
+                                                    {value}
+                                                </MUI_Grid>
+                                            ))}
+                                        </MUI_Grid>
+                                    </MUI_Grid>
+                                </MUI_Grid>
+                            {/*</Container>*/}
+                        </SUI_Grid.Row>
+                    </SUI_Grid>
                 </div>
             )
         }

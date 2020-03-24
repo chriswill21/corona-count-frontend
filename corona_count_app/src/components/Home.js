@@ -152,17 +152,6 @@ class Home extends React.Component {
         }
     }
 
-    renderBlankBunkerListItem = () => {
-        return (
-            <List.Item>
-                <List.Icon name='certificate' size='large' verticalAlign='middle'/>
-                <List.Content>
-                    <List.Header as='a'> </List.Header>
-                    <List.Description as='a'> </List.Description>
-                </List.Content>
-            </List.Item>
-        );
-    }
 
     renderEmptyBunkerListItem = () => {
         return (
