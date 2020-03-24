@@ -46,7 +46,15 @@ class Bunker extends React.Component {
     constructor(props) {
         super(props);
         // Set user upon return
-        this.getBunker(this.props.location.state.bunker_id).then(r => this.__completeStateInitialization())
+        let bunker_id
+        try {
+            bunker_id = this.props.location.state.bunker_id
+
+        } catch (e) {   // Transition coming from a measure
+            bunker_id = this.props.bunker_id
+        }
+        this.getBunker(bunker_id).then(r => this.__completeStateInitialization())
+
     }
 
     // Page change prep functions
@@ -130,7 +138,11 @@ class Bunker extends React.Component {
     }
 
     __completeStateInitialization() {
-        this.setState({user_obj: this.props.location.state.user})
+        try {
+            this.setState({user_obj: this.props.location.state.user})
+        } catch (e) {   // Transitioning from a measure
+            this.setState({user_obj: this.props.user_obj})
+        }
         this.setState({bunker_name: this.state.bunker.name})
         console.log("User object: ", this.state.user_obj)
     }
@@ -227,7 +239,7 @@ class Bunker extends React.Component {
         } else if (this.state.go_to_measure) {
             return (
                 <Measure measure_name={this.state.select_measure_name} measure_id={this.state.select_measure_id}
-                         user_obj={this.state.user_obj}/>
+                         user_obj={this.state.user_obj} bunker_id={this.state.bunker._id}/>
             )
         } else {
             return (

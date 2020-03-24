@@ -11,7 +11,7 @@ import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
 import MUI_Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
-
+import Bunker from './Bunker';
 
 class Measure extends React.Component {
     state = {
@@ -19,7 +19,8 @@ class Measure extends React.Component {
         user_obj: null,
         measure_name: "",
         measure_id: "",
-        go_back: false
+        go_back: false,
+        bunker_id: null
     }
 
     constructor(props) {
@@ -29,7 +30,8 @@ class Measure extends React.Component {
             measure_name: this.props.measure_name,
             measure_id: this.props.measure_id,
             feed: [],
-            go_back: false
+            go_back: false,
+            bunker_id: this.props.bunker_id
         }
         // Set user upon return
         // this.getBunker(this.props.location.state.bunker_id).then(r => this.__completeStateInitialization())
@@ -94,75 +96,81 @@ class Measure extends React.Component {
     }
 
     render() {
-        return (
-            <div className="full-height" style={{
-                backgroundColor: '#900C3F ',
-                backgroundSize: "cover",
-                top: '0',
-                bottom: '0',
-                left: '0',
-                right: '0',
-                position: 'absolute'
-            }}>
-                <SUI_Grid divided='vertically'>
-                    <SUI_Grid.Row columns={1}>
-                        <Container>
-                            <Menu fixed='top' color={'#581845'} inverted borderless>
-                                <Container>
-                                    <Menu.Item position={"left"}>
-                                        <Dropdown item icon='arrow circle left' simple>
-                                            <Dropdown.Menu>
-                                                <Dropdown.Item onClick={this.setGoBack}>
-                                                    Back to bunker
-                                                </Dropdown.Item>
-                                                <Dropdown.Item>
-                                                    <LogoutButton/>
-                                                </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </Menu.Item>
-                                    <Menu.Item header>
-                                        {this.state.bunker_name}
-                                    </Menu.Item>
-                                    <Menu.Item as='a' header position={"right"}>
-                                        <Modal trigger={<Segment.Inline> <Icon name='add'/> Leaderboard, babyy
-                                        </Segment.Inline>}>
-                                            <Modal.Header>Add a new measure, dawggg</Modal.Header>
-                                            <Modal.Content>
-                                                <Segment vertical>
-                                                    <Modal.Description>
-                                                        <p>
-                                                            Just dooo it!... Create a new measure!
-                                                        </p>
-                                                    </Modal.Description>
-                                                    <Divider/>
-                                                    <Divider/>
-                                                    <Button color='#581845' fluid size='large'
-                                                            onClick={this.__onAddMeasureClick}>
-                                                        Esketit
-                                                    </Button>
-                                                </Segment>
-                                            </Modal.Content>
-                                        </Modal>
+        if (this.state.go_back) {
+            return (
+                <Bunker bunker_id={this.state.bunker_id} user_obj={this.state.user_obj}/>
+            )
+        } else {
+            return (
+                <div className="full-height" style={{
+                    backgroundColor: '#900C3F ',
+                    backgroundSize: "cover",
+                    top: '0',
+                    bottom: '0',
+                    left: '0',
+                    right: '0',
+                    position: 'absolute'
+                }}>
+                    <SUI_Grid divided='vertically'>
+                        <SUI_Grid.Row columns={1}>
+                            <Container>
+                                <Menu fixed='top' color={'#581845'} inverted borderless>
+                                    <Container>
+                                        <Menu.Item position={"left"}>
+                                            <Dropdown item icon='arrow circle left' simple>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item onClick={this.setGoBack}>
+                                                        Back to bunker
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item>
+                                                        <LogoutButton/>
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </Menu.Item>
+                                        <Menu.Item header>
+                                            {this.state.bunker_name}
+                                        </Menu.Item>
+                                        <Menu.Item as='a' header position={"right"}>
+                                            <Modal trigger={<Segment.Inline> <Icon name='add'/> Leaderboard, babyy
+                                            </Segment.Inline>}>
+                                                <Modal.Header>Add a new measure, dawggg</Modal.Header>
+                                                <Modal.Content>
+                                                    <Segment vertical>
+                                                        <Modal.Description>
+                                                            <p>
+                                                                Just dooo it!... Create a new measure!
+                                                            </p>
+                                                        </Modal.Description>
+                                                        <Divider/>
+                                                        <Divider/>
+                                                        <Button color='#581845' fluid size='large'
+                                                                onClick={this.__onAddMeasureClick}>
+                                                            Esketit
+                                                        </Button>
+                                                    </Segment>
+                                                </Modal.Content>
+                                            </Modal>
 
-                                    </Menu.Item>
-                                </Container>
-                            </Menu>
-                        </Container>
-                    </SUI_Grid.Row>
+                                        </Menu.Item>
+                                    </Container>
+                                </Menu>
+                            </Container>
+                        </SUI_Grid.Row>
 
-                    <SUI_Grid.Row columns={1}>
-                        <Container>
+                        <SUI_Grid.Row columns={1}>
+                            <Container>
 
-                            <Feed style={{marginTop: '55px'}}>
-                                {this.feedEventCard()}
-                            </Feed>
-                        </Container>
+                                <Feed style={{marginTop: '55px'}}>
+                                    {this.feedEventCard()}
+                                </Feed>
+                            </Container>
 
-                    </SUI_Grid.Row>
-                </SUI_Grid>
-            </div>
-        )
+                        </SUI_Grid.Row>
+                    </SUI_Grid>
+                </div>
+            )
+        }
     }
 }
 
