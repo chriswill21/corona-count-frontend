@@ -41,6 +41,8 @@ class Bunker extends React.Component {
         go_to_measure: false,
         select_measure_name: null,
         select_measure_id: null,
+        select_measure_obj: null,
+        users_for_bunker: null
     }
 
     constructor(props) {
@@ -54,7 +56,6 @@ class Bunker extends React.Component {
             bunker_id = this.props.bunker_id
         }
         this.getBunker(bunker_id).then(r => this.__completeStateInitialization())
-
     }
 
     // Page change prep functions
@@ -63,9 +64,10 @@ class Bunker extends React.Component {
     }
 
     setGoToMeasure = (measure_obj) => {
-        console.log("Measure created response", measure_obj)
+        console.log("Go to measure:", measure_obj)
         this.setState({select_measure_name: measure_obj.name})
         this.setState({select_measure_id: measure_obj._id})
+        this.setState({select_measure_obj: measure_obj})
         this.setState({go_to_measure: true})
     }
 
@@ -97,10 +99,10 @@ class Bunker extends React.Component {
                 await axios.get(url).then(r => {
                     this.setState({bunker: r.data.bunker})
                     this.getMeasuresFromBunker(r.data.bunker._id)
+                    console.log("Retrieved bunker data: ", r.data.bunker)
                 })
-            console.log("Retrieved bunker data: ", response.data.bunker)
         } catch (e) {
-            console.log(e => console.log("Bunker doesn't exist"))
+            console.log("Bunker doesn't exist", e)
             return null
         }
     }
@@ -109,14 +111,16 @@ class Bunker extends React.Component {
         let url = config.bunkers_url + "/measures/" + bunker_id
         url = encodeURI(url)
         console.log('Get measures from bunker url: ', url)
-
         try {
             const response =
-                await axios.get(url).then(r => this.setState({measures: r.data.measures})
+                await axios.get(url).then(r => {
+                        this.setState({measures: r.data.measures})
+                        this.getUsersFromBunker(bunker_id)
+                    }
                 )
             console.log("Retrieved bunker's measures")
         } catch (e) {
-            console.log(e => console.log("Couldn't get bunker's measures"))
+            console.log("Couldn't get bunker's measures", e)
             return null
         }
 
@@ -129,10 +133,28 @@ class Bunker extends React.Component {
 
         try {
             const response =
-                await axios.get(url).then(r => this.setGoToMeasure(r.data.measure))
-            console.log("Retrieved measure data: ", response.data.measure)
+                await axios.get(url).then(r => {
+                    console.log("Retrieved measure data: ", r.data.measure)
+                    this.setGoToMeasure(r.data.measure)
+                })
         } catch (e) {
-            console.log(e => console.log("Measure doesn't exist"))
+            console.log("Measure doesn't exist", e)
+            return null
+        }
+    }
+
+    async getUsersFromBunker(bunker_id) {
+        let url = config.bunkers_url + "/users/" + bunker_id
+        url = encodeURI(url)
+        console.log('Get users from bunker url: ', url)
+        try {
+            const response =
+                await axios.get(url).then(r => {
+                    console.log("Retrieved users from bunker: ", r.data.users)
+                    this.setState({users_for_bunker: r.data.users})
+                })
+        } catch (e) {
+            console.log("Failed getting users from bunker", e)
             return null
         }
     }
@@ -196,7 +218,7 @@ class Bunker extends React.Component {
 
     renderMeasureListItem = (measure) => {
         return (
-            <Card onClick={() => this.getMeasure(measure._id)}>
+            <Card onClick={() => this.getMeasure(measure._id)} id={measure._id}>
                 <CardActionArea>
                     <CardContent>
                         <Typography color="textSecondary" gutterBottom>
@@ -239,7 +261,9 @@ class Bunker extends React.Component {
         } else if (this.state.go_to_measure) {
             return (
                 <Measure measure_name={this.state.select_measure_name} measure_id={this.state.select_measure_id}
-                         user_obj={this.state.user_obj} bunker_id={this.state.bunker._id}/>
+                         measure_obj={this.state.select_measure_obj}
+                         user_obj={this.state.user_obj} bunker_id={this.state.bunker._id}
+                         users_for_bunker={this.state.users_for_bunker}/>
             )
         } else {
             return (
@@ -300,18 +324,17 @@ class Bunker extends React.Component {
                                 </Menu>
                             </Container>
                         </SUI_Grid.Row>
-
                         <SUI_Grid.Row columns={1}>
                             {/*<Container text style={{marginTop: '38px'}}>*/}
                             {/*<Segment vertical>*/}
                             {/*    <List divided inverted relaxed items={measureDataForDisplay}>*/}
                             {/*    </List>*/}
                             {/*</Segment>*/}
-                            <MUI_Grid container spacing={5} style={{marginTop: '48px'}}>
+                            <MUI_Grid container spacing={5} style={{marginTop: '48px'}} direction={"row"}>
                                 <MUI_Grid item xs={12}>
                                     <MUI_Grid container justify="center" spacing={4}>
                                         {measureDataForDisplay.map(value => (
-                                            <MUI_Grid key={value} item>
+                                            <MUI_Grid item>
                                                 {value}
                                             </MUI_Grid>
                                         ))}
