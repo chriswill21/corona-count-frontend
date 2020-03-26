@@ -20,7 +20,8 @@ class Home extends React.Component {
         join_bunker_error: false,
         create_bunker_form_text: "",
         join_bunker_form_text: "",
-        redirect_bunker_id: ""
+        redirect_bunker_id: "",
+        users_for_target_bunker: [],
     }
 
     constructor(props) {
@@ -30,11 +31,27 @@ class Home extends React.Component {
         this.getUserData(user).then(r => console.log("User data retrieved"))
     }
 
-    setRedirect = (bunker) => {
+    async setRedirect(bunker) {
         console.log("clicked on a bunker", bunker)
-        this.setState({
-            redirect_bunker_id: bunker._id
-        })
+        // this.setState({
+        //     redirect_bunker_id: bunker._id
+        // })
+        let url = config.bunkers_url + "/users/" + bunker._id
+        url = encodeURI(url)
+        console.log('Get users from bunker url: ', url)
+        try {
+            const response =
+                await axios.get(url).then(r => {
+                    console.log("Retrieved users from bunker: ", r.data.users)
+                    this.setState({
+                        users_for_target_bunker: r.data.users,
+                        redirect_bunker_id: bunker._id
+                    })
+                })
+        } catch (e) {
+            console.log("Failed getting users from bunker", e)
+            return null
+        }
     }
 
     handleItemClick = (e, {name}) => this.setState({add_bunker_tab: name})
@@ -197,8 +214,9 @@ class Home extends React.Component {
         if (this.state.redirect_bunker_id !== "") {
             let bunker_id = this.state.redirect_bunker_id
             let user_obj = this.state.user_obj
+            let users_for_bunker = this.state.users_for_target_bunker
             return (
-                < Redirect to={{pathname: "/bunker", state: {user: user_obj, bunker_id: bunker_id}}}/>
+                < Redirect to={{pathname: "/bunker", state: {user: user_obj, bunker_id: bunker_id, users_for_bunker: users_for_bunker}}}/>
             )
 
         } else {

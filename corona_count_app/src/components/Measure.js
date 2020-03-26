@@ -34,6 +34,8 @@ function createData(name, code, population, size) {
 class Measure extends React.Component {
     state = {
         raw_feed: [],
+        lb_rows: [],
+        ratings: [],
         user_obj: null,
         measure_name: "",
         measure_id: "",
@@ -41,7 +43,6 @@ class Measure extends React.Component {
         go_back: false,
         bunker_id: null,
         users: [],
-        user_id_to_name: new Map(),
         user_being_rated_name_and_id: {},
         user_being_rated_comment: "",
         user_being_rated_delta: 0,
@@ -50,29 +51,10 @@ class Measure extends React.Component {
     }
 
     columns = [
+        {id: 'rank', label: 'Rank', minWidth: 170},
         {id: 'name', label: 'Name', minWidth: 170},
-        {id: 'code', label: 'ISO\u00a0Code', minWidth: 100},
-        {
-            id: 'population',
-            label: 'Population',
-            minWidth: 170,
-            align: 'right',
-            format: value => value.toLocaleString(),
-        },
-        {
-            id: 'size',
-            label: 'Size\u00a0(km\u00b2)',
-            minWidth: 170,
-            align: 'right',
-            format: value => value.toLocaleString(),
-        },
-        {
-            id: 'density',
-            label: 'Density',
-            minWidth: 170,
-            align: 'right',
-            format: value => value.toFixed(2),
-        },
+        {id: 'score', label: 'Score', minWidth: 170},
+
     ];
 
     rows = [
@@ -97,14 +79,15 @@ class Measure extends React.Component {
         super(props);
         this.state = {
             user_obj: this.props.user_obj,
+            ratings: this.props.measure_obj.ratings,
             measure_name: this.props.measure_name,
             measure_id: this.props.measure_id,
             measure_obj: this.props.measure_obj,
             raw_feed: [],
+            lb_rows: this.buildLeaderboard(this.props.measure_obj.ratings, this.props.users_for_bunker),
             go_back: false,
             bunker_id: this.props.bunker_id,
             users: this.props.users_for_bunker,
-            user_id_to_name: new Map(),
             user_being_rated_name_and_id: {},
             user_being_rated_comment: "",
             user_being_rated_delta: 0,
@@ -112,7 +95,6 @@ class Measure extends React.Component {
             endpoint: "http://127.0.0.1:4000",
         }
 
-        this.setUserIdToName()
         this.getFeed(this.state.measure_id).then()
     }
 
@@ -123,21 +105,16 @@ class Measure extends React.Component {
             this.setState({raw_feed: data})
         });
         socket.on("verified_post", data => {
-            this.setState({raw_feed: data})
+            this.setState({
+                raw_feed: data.feed,
+                ratings: data.ratings,
+                lb_rows: this.buildLeaderboard(data.ratings, this.state.users)
+            });
         });
     }
 
     setGoBack = () => {
         this.setState({go_back: true})
-    }
-
-    setUserIdToName = () => {
-        let user_id_to_name = new Map()
-        this.state.users.forEach(value => {
-            user_id_to_name.set(value.user_id, value.name)
-        })
-        this.setState({user_id_to_name: user_id_to_name})
-        console.log("User id to name", user_id_to_name)
     }
 
     handleUserBeingRatedSelectorChange = event => {
@@ -164,6 +141,19 @@ class Measure extends React.Component {
         return feed
     }
 
+    buildLeaderboard = (ratings, users) => {
+        let sorted_ratings = ratings;
+        sorted_ratings.sort((a, b) => (a.score > b.score) ? -1 : 1);
+        let leaderboard = [];
+        for (let i = 0; i < sorted_ratings.length; i++) {
+            let name = users.filter(entry => entry.user_id == sorted_ratings[i].user)[0].name;
+            let rank = i + 1;
+            let score = sorted_ratings[i].score;
+            leaderboard.push({rank, name, score})
+        }
+        return leaderboard
+    }
+
 
     // On click functions
 
@@ -174,9 +164,11 @@ class Measure extends React.Component {
         } else {
             // Post delta to backend
             this.postDelta().then()
-            this.setState({user_being_rated_name_and_id: {}})
-            this.setState({user_being_rated_comment: ""})
-            this.setState({user_being_rated_delta: 0})
+            this.setState({
+                user_being_rated_name_and_id: {},
+                user_being_rated_comment: "",
+                user_being_rated_delta: 0
+            })
         }
     }
 
@@ -370,7 +362,7 @@ class Measure extends React.Component {
     render() {
         if (this.state.go_back) {
             return (
-                <Bunker bunker_id={this.state.bunker_id} user_obj={this.state.user_obj}/>
+                <Bunker bunker_id={this.state.bunker_id} user_obj={this.state.user_obj} users_for_bunker={this.state.users}/>
             )
         } else {
             return (
@@ -416,7 +408,7 @@ class Measure extends React.Component {
                                         <Menu.Item as='a' header position={"right"}>
                                             <Modal trigger={<Segment.Inline> <Icon name='add'/> Leaderboard, babyy
                                             </Segment.Inline>}>
-                                                <Modal.Header>Add a new measure, dawggg</Modal.Header>
+                                                <Modal.Header>Leaderboard</Modal.Header>
                                                 <Modal.Content>
                                                     <TableContainer>
                                                         <Table stickyHeader aria-label="sticky table">
@@ -434,7 +426,7 @@ class Measure extends React.Component {
                                                                 </TableRow>
                                                             </TableHead>
                                                             <TableBody>
-                                                                {this.rows.map(row => {
+                                                                {this.state.lb_rows.map(row => {
                                                                     return (
                                                                         <TableRow hover role="checkbox" tabIndex={-1}
                                                                                   key={row.code}>
@@ -443,7 +435,7 @@ class Measure extends React.Component {
                                                                                 return (
                                                                                     <TableCell key={column.id}
                                                                                                align={column.align}>
-                                                                                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                                                        {value}
                                                                                     </TableCell>
                                                                                 );
                                                                             })}

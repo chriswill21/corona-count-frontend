@@ -58,6 +58,19 @@ class Bunker extends React.Component {
         this.getBunker(bunker_id).then(r => this.__completeStateInitialization())
     }
 
+    buildLeaderboard = (ratings, users) => {
+        let sorted_ratings = ratings;
+        sorted_ratings.sort((a, b) => (a.score > b.score) ? -1 : 1);
+        let leaderboard = [];
+        for (let i = 0; i < sorted_ratings.length; i++) {
+            let name = users.filter(entry => entry.user_id == sorted_ratings[i].user)[0].name;
+            let rank = i + 1;
+            let score = sorted_ratings[i].score;
+            leaderboard.push({rank, name, score})
+        }
+        return leaderboard
+    }
+
     // Page change prep functions
     setGoBack = () => {
         this.setState({go_back: true})
@@ -160,12 +173,21 @@ class Bunker extends React.Component {
     }
 
     __completeStateInitialization() {
+        // Set active user obj
         try {
             this.setState({user_obj: this.props.location.state.user})
         } catch (e) {   // Transitioning from a measure
             this.setState({user_obj: this.props.user_obj})
         }
+
+        // Set bunker users
+        try {
+            this.setState({users_for_bunker: this.props.location.state.users_for_bunker})
+        } catch (e) { // Transitioning from a measure
+            this.setState({users_for_bunker: this.props.users_for_bunker})
+        }
         this.setState({bunker_name: this.state.bunker.name})
+
         console.log("User object: ", this.state.user_obj)
     }
 
@@ -217,23 +239,24 @@ class Bunker extends React.Component {
     }
 
     renderMeasureListItem = (measure) => {
+        let lb = this.buildLeaderboard(measure.ratings, this.state.users_for_bunker)
         return (
             <Card onClick={() => this.getMeasure(measure._id)} id={measure._id}>
                 <CardActionArea>
                     <CardContent>
-                        <Typography color="textSecondary" gutterBottom>
+                        <Typography variant="h5" component="h2">
                             {measure.name}
                         </Typography>
-                        <Typography variant="h5" component="h2">
-                            hello
-                        </Typography>
                         <Typography color="textSecondary" gutterBottom>
-                            adjective
+                            Rankings:
                         </Typography>
                         <Typography variant="body2" component="p">
-                            Christien is #1
+                            1. {lb[0].name}
                             <br/>
-                            {'"a benevolent smile"'}
+                            2. {lb[1].name}
+                            <br/>
+                            3. {lb[2].name}
+
                         </Typography>
                     </CardContent>
                 </CardActionArea>
