@@ -23,6 +23,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import socketIOClient from "socket.io-client";
+
 
 function createData(name, code, population, size) {
     const density = population / size;
@@ -31,7 +33,7 @@ function createData(name, code, population, size) {
 
 class Measure extends React.Component {
     state = {
-        feed: [],
+        raw_feed: [],
         user_obj: null,
         measure_name: "",
         measure_id: "",
@@ -39,10 +41,12 @@ class Measure extends React.Component {
         go_back: false,
         bunker_id: null,
         users: [],
+        user_id_to_name: new Map(),
         user_being_rated_name_and_id: {},
         user_being_rated_comment: "",
         user_being_rated_delta: 0,
-        snackbar_open: false
+        snackbar_open: false,
+        endpoint: "http://127.0.0.1:4000"
     }
 
     columns = [
@@ -96,19 +100,44 @@ class Measure extends React.Component {
             measure_name: this.props.measure_name,
             measure_id: this.props.measure_id,
             measure_obj: this.props.measure_obj,
-            feed: [],
+            raw_feed: [],
             go_back: false,
             bunker_id: this.props.bunker_id,
             users: this.props.users_for_bunker,
+            user_id_to_name: new Map(),
             user_being_rated_name_and_id: {},
             user_being_rated_comment: "",
             user_being_rated_delta: 0,
-            snackbar_open: false
+            snackbar_open: false,
+            endpoint: "http://127.0.0.1:4000",
         }
+
+        this.setUserIdToName()
+        this.getFeed(this.state.measure_id).then()
+    }
+
+    componentDidMount() {
+        const endpoint = this.state.endpoint;
+        const socket = socketIOClient(endpoint);
+        socket.on("new_post", data => {
+            this.setState({raw_feed: data})
+        });
+        socket.on("verified_post", data => {
+            this.setState({raw_feed: data})
+        });
     }
 
     setGoBack = () => {
         this.setState({go_back: true})
+    }
+
+    setUserIdToName = () => {
+        let user_id_to_name = new Map()
+        this.state.users.forEach(value => {
+            user_id_to_name.set(value.user_id, value.name)
+        })
+        this.setState({user_id_to_name: user_id_to_name})
+        console.log("User id to name", user_id_to_name)
     }
 
     handleUserBeingRatedSelectorChange = event => {
@@ -127,6 +156,15 @@ class Measure extends React.Component {
         this.setState({user_being_rated_delta: value.toString()})
     }
 
+    buildFeed = () => {
+        let feed = [this.postEventCard()]
+        this.state.raw_feed.forEach(raw_feed_item => {
+            feed.push(this.feedEventCard(raw_feed_item))
+        })
+        return feed
+    }
+
+
     // On click functions
 
     __onSubmitDeltaClick = () => {
@@ -144,6 +182,11 @@ class Measure extends React.Component {
 
     _onCommentTextChange = (event) => {
         this.setState({user_being_rated_comment: event.target.value})
+    }
+
+    _onVerifyDelta = (post_id) => {
+        // this.state.raw_feed.filter((entry => entry._id === post_id))[0].is_verified = true
+        this.verifyPost(post_id).then()
     }
 
     // Back end async functions
@@ -166,6 +209,38 @@ class Measure extends React.Component {
             ).then(r => console.log("Successfully posted delta"))
         } catch (e) {
             console.log("Failed to post delta", e.response)
+            return null
+        }
+    }
+
+    async getFeed() {
+        let url = config.measures_url + "/feed/" + this.state.measure_id
+        url = encodeURI(url)
+        console.log('Get feed url: ', url)
+        try {
+            const response =
+                await axios.get(url).then(r => {
+                    console.log("Retrieved feed: ", r.data.feed)
+                    this.setState({raw_feed: r.data.feed})
+                })
+        } catch (e) {
+            console.log("Failed to retrieve feed", e.response)
+            return null
+        }
+    }
+
+    async verifyPost(post_id) {
+        let url = config.measures_url + "/verify/" + this.state.measure_id + "/" + post_id
+        url = encodeURI(url)
+        console.log('Verify post url: ', url)
+        try {
+            const response = await axios.post(
+                url,
+                {},
+                {headers: {'Content-Type': 'application/json'}}
+            ).then(r => console.log("Successfully posted delta"))
+        } catch (e) {
+            console.log("Failed to verify post", e.response)
             return null
         }
     }
@@ -215,6 +290,7 @@ class Measure extends React.Component {
                                         aria-labelledby="discrete-slider-small-steps"
                                         step={1.0}
                                         marks
+                                        color={"secondary"}
                                         min={-10.0}
                                         max={10.0}
                                         valueLabelDisplay="auto"
@@ -233,13 +309,27 @@ class Measure extends React.Component {
         )
     }
 
-    feedEventCard = () => {
+    feedEventCard = (raw_feed_item) => {
+        let post_id = raw_feed_item._id
+        let accuser = this.state.users.filter(entry => entry.user_id === raw_feed_item.accuser_id)[0].name
+        let victim = this.state.users.filter(entry => entry.user_id === raw_feed_item.victim_id)[0].name
+        let delta = raw_feed_item.delta
+        let is_verified = raw_feed_item.is_verified ? <div></div> :
+            <Button variant="contained" color={"secondary"} onClick={() => this._onVerifyDelta(post_id)}>Verify</Button>
+        let comment = raw_feed_item.comment
+        let initials = null
+        try {
+            initials = accuser.split(" ")[0][0]
+        } catch {
+            initials = " "
+        }
         return (<Feed.Event>
                 <Feed.Label>
-                    <Avatar>CW</Avatar> </Feed.Label>
+                    <Avatar>{initials}</Avatar>
+                </Feed.Label>
                 <Feed.Content>
                     <Feed.Summary>
-                        <Feed.User>Christien Williams</Feed.User>
+                        <Feed.User>{accuser}</Feed.User>
                     </Feed.Summary>
 
                     <Feed.Extra>
@@ -249,33 +339,25 @@ class Measure extends React.Component {
                                 <Card>
                                     <CardContent>
                                         <Typography color="textSecondary" gutterBottom>
-                                            Ariel Brito receives
+                                            {victim} receives
                                         </Typography>
                                         <Typography variant="h5" component="h2">
-                                            - 5
+                                            {delta}
                                         </Typography>
                                         <Typography color="textSecondary" gutterBottom>
                                         </Typography>
-                                        {/*<Typography variant="body2" component="p">*/}
-                                        {/*    From*/}
-                                        {/*    <br/>*/}
-                                        {/*    Christien Williams*/}
-                                        {/*</Typography>*/}
                                     </CardContent>
                                 </Card>
                             </MUI_Grid>
 
                             <MUI_Grid item xs={7}>
                                 <p>
-                                    Ours is a life of constant reruns. We're always circling back to where
-                                    we'd we started, then starting all over again. Even if we don't run
-                                    extra laps that day, we surely will come back for more of the same
-                                    another day soon.
+                                    {comment}
                                 </p>
                             </MUI_Grid>
 
                             <MUI_Grid item xs={2}>
-                                <Button variant="contained" color={"secondary"}>Verify</Button>
+                                {is_verified}
                             </MUI_Grid>
                         </MUI_Grid>
                         <Divider/>
@@ -431,12 +513,13 @@ class Measure extends React.Component {
                         <SUI_Grid.Row columns={1}>
                             <Container>
                                 <Feed style={{marginTop: '55px'}}>
-                                    {this.postEventCard()}
-                                    {this.feedEventCard()}
-                                    {this.feedEventCard()}
-                                    {this.feedEventCard()}
-                                    {this.feedEventCard()}
-                                    {this.feedEventCard()}
+                                    {this.buildFeed().map(value => value)}
+                                    {/*{this.postEventCard()}*/}
+                                    {/*{this.feedEventCard()}*/}
+                                    {/*{this.feedEventCard()}*/}
+                                    {/*{this.feedEventCard()}*/}
+                                    {/*{this.feedEventCard()}*/}
+                                    {/*{this.feedEventCard()}*/}
                                 </Feed>
                             </Container>
 
