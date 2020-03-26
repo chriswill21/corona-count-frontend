@@ -28,6 +28,9 @@ import Typography from "@material-ui/core/Typography";
 import Flexbox from 'flexbox-react';
 import MUI_Grid from '@material-ui/core/Grid';
 import Measure from './Measure';
+import {primaryColor} from "material-kit-react/src/assets/jss/material-kit-react";
+import {colors} from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
 
 class Bunker extends React.Component {
     state = {
@@ -202,11 +205,6 @@ class Bunker extends React.Component {
 
     }
 
-    async __onMeasureCardClick(id) {
-        let measure_obj = await this.getMeasure(id)
-        this.setGoToMeasure(measure_obj)
-    }
-
     // Render functions
 
     addMeasureCard = () => {
@@ -241,26 +239,29 @@ class Bunker extends React.Component {
     renderMeasureListItem = (measure) => {
         let lb = this.buildLeaderboard(measure.ratings, this.state.users_for_bunker)
         return (
-            <Card onClick={() => this.getMeasure(measure._id)} id={measure._id}>
-                <CardActionArea>
-                    <CardContent>
-                        <Typography variant="h5" component="h2">
-                            {measure.name}
-                        </Typography>
-                        <Typography color="textSecondary" gutterBottom>
-                            Rankings:
-                        </Typography>
-                        <Typography variant="body2" component="p">
-                            1. {lb[0].name}
-                            <br/>
-                            2. {lb[1].name}
-                            <br/>
-                            3. {lb[2].name}
+            <Paper color={"grey"}>
+                <Card onClick={() => this.getMeasure(measure._id)} id={measure._id} raised>
+                    <CardActionArea>
+                        <CardContent>
+                            <Typography variant="h5" component="h2">
+                                {measure.name}
+                            </Typography>
+                            <Typography color="textSecondary" gutterBottom>
+                                Rankings:
+                            </Typography>
+                            <Typography variant="body2" component="p">
+                                1. {lb[0].name}
+                                <br/>
+                                2. {lb[1] ? lb[1].name : " "}
+                                <br/>
+                                3. {lb[2] ? lb[2].name: " "}
 
-                        </Typography>
-                    </CardContent>
-                </CardActionArea>
-            </Card>
+                            </Typography>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            </Paper>
+
         );
     }
 
@@ -291,13 +292,10 @@ class Bunker extends React.Component {
         } else {
             return (
                 <div className="full-height" style={{
-                    backgroundColor: '#900C3F ',
+                    backgroundColor: '#73031D ',
                     backgroundSize: "cover",
-                    top: '0',
-                    bottom: '0',
-                    left: '0',
-                    right: '0',
-                    position: 'absolute'
+                    position: 'absolute',
+                    minHeight: '100%'
                 }}>
                     <SUI_Grid divided='vertically'>
                         <SUI_Grid.Row columns={1}>
@@ -317,7 +315,10 @@ class Bunker extends React.Component {
                                             </Dropdown>
                                         </Menu.Item>
                                         <Menu.Item header>
-                                            {this.state.bunker_name}
+                                            <Typography variant={'h5'}>
+                                                {this.state.bunker_name}
+                                            </Typography>
+
                                         </Menu.Item>
                                         <Menu.Item as='a' header position={"right"}>
                                             <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure
@@ -348,11 +349,6 @@ class Bunker extends React.Component {
                             </Container>
                         </SUI_Grid.Row>
                         <SUI_Grid.Row columns={1}>
-                            {/*<Container text style={{marginTop: '38px'}}>*/}
-                            {/*<Segment vertical>*/}
-                            {/*    <List divided inverted relaxed items={measureDataForDisplay}>*/}
-                            {/*    </List>*/}
-                            {/*</Segment>*/}
                             <MUI_Grid container spacing={5} style={{marginTop: '48px'}} direction={"row"}>
                                 <MUI_Grid item xs={12}>
                                     <MUI_Grid container justify="center" spacing={4}>

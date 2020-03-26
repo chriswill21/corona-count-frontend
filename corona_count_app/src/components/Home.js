@@ -9,6 +9,7 @@ import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {Redirect} from "react-router-dom";
+import { Typography } from '@material-ui/core';
 
 class Home extends React.Component {
     state = {
@@ -169,7 +170,6 @@ class Home extends React.Component {
         }
     }
 
-
     renderEmptyBunkerListItem = () => {
         return (
             <List.Item>
@@ -205,7 +205,6 @@ class Home extends React.Component {
         return data
     };
 
-
     render() {
 
         let bunkerDataForDisplay = this.genBunkerList()
@@ -216,20 +215,20 @@ class Home extends React.Component {
             let user_obj = this.state.user_obj
             let users_for_bunker = this.state.users_for_target_bunker
             return (
-                < Redirect to={{pathname: "/bunker", state: {user: user_obj, bunker_id: bunker_id, users_for_bunker: users_for_bunker}}}/>
+                < Redirect to={{
+                    pathname: "/bunker",
+                    state: {user: user_obj, bunker_id: bunker_id, users_for_bunker: users_for_bunker}
+                }}/>
             )
 
         } else {
             return (
 
-                <div class="full-height" style={{
-                    backgroundColor: '#900C3F ',
+                <div className="full-height" style={{
+                    backgroundColor: '#73031D ',
                     backgroundSize: "cover",
-                    top: '0',
-                    bottom: '0',
-                    left: '0',
-                    right: '0',
-                    position: 'absolute'
+                    position: 'absolute',
+                    minHeight: '100%'
                 }}>
                     <Grid divided='vertically'>
                         <Grid.Row columns={1}>
@@ -246,12 +245,14 @@ class Home extends React.Component {
                                             </Dropdown>
                                         </Menu.Item>
                                         <Menu.Item header>
-                                            It's shot o'clock, bitch!
+                                            <Typography variant={'h3'}>
+                                                Corona Count
+                                            </Typography>
                                         </Menu.Item>
-                                        <Menu.Item as='a' header position={"right"}>
+                                        <Menu.Item as='a' position={"right"}>
                                             <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Bunker
                                             </Segment.Inline>}>
-                                                <Modal.Header>Add a new bunker, my guy</Modal.Header>
+                                                <Modal.Header>Add a new bunker</Modal.Header>
                                                 <Modal.Content>
                                                     <Segment vertical>
                                                         <Modal.Description>
@@ -292,7 +293,7 @@ class Home extends React.Component {
                         </Grid.Row>
 
                         <Grid.Row columns={1}>
-                            <Container text style={{marginTop: '38px'}}>
+                            <Container text style={{marginTop: '50px'}}>
                                 <Segment vertical>
                                     <List divided inverted relaxed items={bunkerDataForDisplay}>
                                     </List>

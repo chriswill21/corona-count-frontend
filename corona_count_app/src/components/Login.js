@@ -7,7 +7,7 @@ class Login extends React.Component {
         return (
             <Grid textAlign='center' style={{height: '100vh'}} verticalAlign='middle'>
                 <Grid.Column style={{maxWidth: 450}}>
-                    <Header as='h2' color='teal' textAlign='center'>
+                    <Header as='h2' color='#73031D' textAlign='center'>
                         <Image src='../../icons/icon_1.png'/> Log-in to your account
                     </Header>
                     <Form size='large'>

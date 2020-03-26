@@ -158,7 +158,7 @@ class Measure extends React.Component {
     // On click functions
 
     __onSubmitDeltaClick = () => {
-        if (!this.state.user_being_rated_name_and_id || !this.state.user_being_rated_comment) {
+        if (!this.state.user_being_rated_name_and_id || this.state.user_being_rated_name_and_id === {} || !this.state.user_being_rated_comment) {
             // Tell them to add name breadcrums
             this.handleSnackbarOpen()
         } else {
@@ -254,8 +254,9 @@ class Measure extends React.Component {
                                     onChange={this.handleUserBeingRatedSelectorChange}
                                     helperText="User being rated"
                                     variant="outlined"
-                                    color={"primary"}
+                                    color={"secondary"}
                                     defaultValue={""}
+                                    value={this.state.user_being_rated_name_and_id === {}  ? null : this.state.user_being_rated_name_and_id.name}
                                 >
                                     {this.state.users.map(option => (
                                         <option key={option.user_id} value={option}>
@@ -267,14 +268,16 @@ class Measure extends React.Component {
                             <MUI_Grid item xs={2}>
                                 <TextField id="standard-basic" label="Comments"
                                            value={this.state.user_being_rated_comment}
-                                           onChange={(event => this._onCommentTextChange(event))
-                                           }/>
+                                           onChange={(event => this._onCommentTextChange(event))}
+                                           color={"secondary"}/>
 
                             </MUI_Grid>
                             <MUI_Grid item xs={4}>
                                 <Container>
                                     <Typography id="discrete-slider-small-steps" gutterBottom>
-                                        Point delta: {this.state.user_being_rated_delta.toString()}
+                                        <Typography style={{color: 'white'}}>
+                                            Point delta: {this.state.user_being_rated_delta.toString()}
+                                        </Typography>
                                     </Typography>
                                     <Slider
                                         defaultValue={0.0}
@@ -321,7 +324,11 @@ class Measure extends React.Component {
                 </Feed.Label>
                 <Feed.Content>
                     <Feed.Summary>
-                        <Feed.User>{accuser}</Feed.User>
+                        <Feed.User style={{color: 'white'}}>
+                            <Typography variant={"h5"}>
+                                {accuser}
+                            </Typography>
+                        </Feed.User>
                     </Feed.Summary>
 
                     <Feed.Extra>
@@ -343,7 +350,7 @@ class Measure extends React.Component {
                             </MUI_Grid>
 
                             <MUI_Grid item xs={7}>
-                                <p>
+                                <p style={{color: 'white'}}>
                                     {comment}
                                 </p>
                             </MUI_Grid>
@@ -362,18 +369,16 @@ class Measure extends React.Component {
     render() {
         if (this.state.go_back) {
             return (
-                <Bunker bunker_id={this.state.bunker_id} user_obj={this.state.user_obj} users_for_bunker={this.state.users}/>
+                <Bunker bunker_id={this.state.bunker_id} user_obj={this.state.user_obj}
+                        users_for_bunker={this.state.users}/>
             )
         } else {
             return (
                 <div className="full-height" style={{
-                    backgroundColor: '#900C3F ',
+                    backgroundColor: '#73031D ',
                     backgroundSize: "cover",
-                    top: '0',
-                    bottom: '0',
-                    left: '0',
-                    right: '0',
-                    position: 'absolute'
+                    position: 'absolute',
+                    minHeight: '100%'
                 }}>
                     <Snackbar
                         anchorOrigin={{
@@ -403,7 +408,9 @@ class Measure extends React.Component {
                                             </Dropdown>
                                         </Menu.Item>
                                         <Menu.Item header>
-                                            {this.state.measure_name}
+                                            <Typography variant={'h5'}>
+                                                {this.state.measure_name}
+                                            </Typography>
                                         </Menu.Item>
                                         <Menu.Item as='a' header position={"right"}>
                                             <Modal trigger={<Segment.Inline> <Icon name='add'/> Leaderboard, babyy
@@ -453,65 +460,10 @@ class Measure extends React.Component {
                                 </Menu>
                             </Container>
                         </SUI_Grid.Row>
-                        {/*<SUI_Grid.Row columns={1}>*/}
-                        {/*    <Menu fixed='top' color={'grey'} inverted borderless style={{marginTop: '60px'}} fluid widths={4}>*/}
-                        {/*        <Container>*/}
-                        {/*            <Menu.Item position={"left"}>*/}
-                        {/*                <TextField*/}
-                        {/*                    id="outlined-select-currency-native"*/}
-                        {/*                    select*/}
-                        {/*                    label="User select"*/}
-                        {/*                    onChange={this.handleUserBeingRatedSelectorChange}*/}
-                        {/*                    SelectProps={{*/}
-                        {/*                        native: true,*/}
-                        {/*                    }}*/}
-                        {/*                    helperText="User being rated"*/}
-                        {/*                    variant="outlined"*/}
-                        {/*                >*/}
-                        {/*                    /!*{this.state.users.map(option => (*!/*/}
-                        {/*                    /!*    <option key={option.value.user} value={option.value.user}>*!/*/}
-                        {/*                    /!*        {option.label}*!/*/}
-                        {/*                    /!*    </option>*!/*/}
-                        {/*                    /!*))}*!/*/}
-                        {/*                </TextField>*/}
-                        {/*            </Menu.Item>*/}
-                        {/*            <Menu.Item header>*/}
-                        {/*                <TextField id="standard-basic" label="Comments"/>*/}
-
-                        {/*            </Menu.Item>*/}
-                        {/*            <Menu.Item header>*/}
-                        {/*                <Container>*/}
-                        {/*                    <Typography id="discrete-slider-small-steps" gutterBottom>*/}
-                        {/*                        Point delta*/}
-                        {/*                    </Typography>*/}
-                        {/*                    <Slider*/}
-                        {/*                        defaultValue={0.0}*/}
-                        {/*                        // getAriaValueText={valuetext}*/}
-                        {/*                        aria-labelledby="discrete-slider-small-steps"*/}
-                        {/*                        step={1.0}*/}
-                        {/*                        marks*/}
-                        {/*                        min={-10.0}*/}
-                        {/*                        max={10.0}*/}
-                        {/*                        valueLabelDisplay="auto"*/}
-                        {/*                    />*/}
-                        {/*                </Container>*/}
-                        {/*            </Menu.Item>*/}
-                        {/*            <Menu.Item as='a' header position={"right"}>*/}
-                        {/*                <Button variant="contained">Submit</Button>*/}
-                        {/*            </Menu.Item>*/}
-                        {/*        </Container>*/}
-                        {/*    </Menu>*/}
-                        {/*</SUI_Grid.Row>*/}
                         <SUI_Grid.Row columns={1}>
                             <Container>
                                 <Feed style={{marginTop: '55px'}}>
                                     {this.buildFeed().map(value => value)}
-                                    {/*{this.postEventCard()}*/}
-                                    {/*{this.feedEventCard()}*/}
-                                    {/*{this.feedEventCard()}*/}
-                                    {/*{this.feedEventCard()}*/}
-                                    {/*{this.feedEventCard()}*/}
-                                    {/*{this.feedEventCard()}*/}
                                 </Feed>
                             </Container>
 

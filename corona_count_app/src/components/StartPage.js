@@ -1,6 +1,8 @@
 import React from 'react'
 import {Button, Form, Grid, Header, Image, Message, Segment, Icon, Modal, Text} from 'semantic-ui-react'
 import {useAuth0} from "../react-auth0-spa";
+import Typography from "@material-ui/core/Typography";
+import BlurOnIcon from '@material-ui/icons/BlurOn';
 
 const StartPage = () => {
     const {isAuthenticated, loginWithRedirect, logout} = useAuth0();
@@ -12,20 +14,18 @@ const StartPage = () => {
         <div>
             <Grid textAlign='center' style={{height: '100vh'}} verticalAlign='middle'>
                 <Grid.Column style={{maxWidth: 450}}>
-                    <Header as='h2' color='teal' textAlign='center'>
-                        <Image src='../../icons/icon_1.png'/> Welcome to Corona Count!
+                    <Header as='h2' color='#73031D' textAlign='center'>
+                        <BlurOnIcon fontSize="large"/> <Typography variant={"h2"} style={{color: "#73031D"}}> Welcome to Corona Count! </Typography>
                     </Header>
                     <Form size='large'>
-                        <Segment stacked>
+                        <Segment >
                             {!isAuthenticated && (
-                                <Button color='teal' fluid size='large' onClick={() => loginWithRedirect({})}>Get
+                                <Button color='#73031D' fluid size='large' onClick={() => loginWithRedirect({})}>Get
                                     Started!</Button>
-                                // <button onClick={() => loginWithRedirect({})}>Get Started!</button>
                             )}
 
                             {isAuthenticated && (
-                                // <button onClick={() => logout()}>Log out</button>
-                                <Button color='teal' fluid size='large' onClick={() => logout()}>Log out</Button>
+                                <Button color='#73031D' fluid size='large' onClick={() => logout()}>Log out</Button>
                             )}
                         </Segment>
                     </Form>
