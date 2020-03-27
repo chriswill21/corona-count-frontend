@@ -76,21 +76,21 @@ class Home extends React.Component {
             this.postNewUser(user);
         }
 
-        this.setState({user_name: user.name})
-        this.setState({user_id: id.toString()})
+        this.setState({user_name: user.name});
+        this.setState({user_id: id.toString()});
         this.setState({user_obj: user})
     }
 
     async postNewUser(user) {
-        let url = config.users_url
-        url = encodeURI(url)
-        let id = user.sub.slice(6)
-        console.log('Post new user url: ', url)
+        let url = config.users_url;
+        url = encodeURI(url);
+        let id = user.sub.slice(6);
+        console.log('Post new user url: ', url);
         const response = await axios.post(
             url,
             {name: user.nickname.toString(), bunkers: [], user_id: id.toString()},
             {headers: {'Content-Type': 'application/json'}}
-        ).catch(e => console.log(e.response.data))
+        ).catch(e => console.log(e.response.data));
         console.log("Post new user response data", response.data)
     }
 

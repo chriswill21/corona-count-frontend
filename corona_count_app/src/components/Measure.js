@@ -44,7 +44,7 @@ class Measure extends React.Component {
         go_back: false,
         bunker_id: null,
         users: [],
-        user_being_rated_name_and_id: {},
+        user_being_rated_name_and_id: null,
         user_being_rated_comment: "",
         user_being_rated_delta: 0,
         snackbar_open: false,
@@ -89,7 +89,7 @@ class Measure extends React.Component {
             go_back: false,
             bunker_id: this.props.bunker_id,
             users: this.props.users_for_bunker,
-            user_being_rated_name_and_id: {},
+            user_being_rated_name_and_id: null,
             user_being_rated_comment: "",
             user_being_rated_delta: 0,
             snackbar_open: false,
@@ -164,18 +164,18 @@ class Measure extends React.Component {
             this.handleSnackbarOpen()
         } else {
             // Post delta to backend
-            this.postDelta().then()
+            this.postDelta().then();
             this.setState({
-                user_being_rated_name_and_id: {},
+                user_being_rated_name_and_id: null,
                 user_being_rated_comment: "",
                 user_being_rated_delta: 0
             })
         }
-    }
+    };
 
     _onCommentTextChange = (event) => {
         this.setState({user_being_rated_comment: event.target.value})
-    }
+    };
 
     _onVerifyDelta = (post_id) => {
         // this.state.raw_feed.filter((entry => entry._id === post_id))[0].is_verified = true
@@ -258,7 +258,7 @@ class Measure extends React.Component {
                                     variant="outlined"
                                     color={"primary"}
                                     defaultValue={""}
-                                    value={this.state.user_being_rated_name_and_id === {}  ? null : this.state.user_being_rated_name_and_id.name}
+                                    value={this.state.user_being_rated_name_and_id == null ? "" : this.state.user_being_rated_name_and_id}
                                 >
 
                                     {this.state.users.map(option => (
