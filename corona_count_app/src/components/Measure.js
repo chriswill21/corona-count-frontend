@@ -13,6 +13,7 @@ import MUI_Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import Bunker from './Bunker';
 import TextField from '@material-ui/core/TextField'
+import MenuItem from '@material-ui/core/MenuItem'
 import Snackbar from '@material-ui/core/Snackbar';
 import config from "../url_config";
 import axios from "axios";
@@ -240,6 +241,7 @@ class Measure extends React.Component {
     // Component render functions
 
     postEventCard = () => {
+        console.log(this.state.users);
         return (
             <Feed.Event>
                 <Feed.Content>
@@ -248,20 +250,21 @@ class Measure extends React.Component {
                                   alignItems={"center"}>
                             <MUI_Grid item xs={2}>
                                 <TextField
-                                    id="outlined-select-currency-native"
+                                    id="outlined-select-user-native"
                                     select
                                     label="User select"
                                     onChange={this.handleUserBeingRatedSelectorChange}
                                     helperText="User being rated"
                                     variant="outlined"
-                                    color={"secondary"}
+                                    color={"primary"}
                                     defaultValue={""}
                                     value={this.state.user_being_rated_name_and_id === {}  ? null : this.state.user_being_rated_name_and_id.name}
                                 >
+
                                     {this.state.users.map(option => (
-                                        <option key={option.user_id} value={option}>
+                                        <MenuItem key={option.user_id} value={option}>
                                             {option.name}
-                                        </option>
+                                        </MenuItem>
                                     ))}
                                 </TextField>
                             </MUI_Grid>
@@ -269,13 +272,13 @@ class Measure extends React.Component {
                                 <TextField id="standard-basic" label="Comments"
                                            value={this.state.user_being_rated_comment}
                                            onChange={(event => this._onCommentTextChange(event))}
-                                           color={"secondary"}/>
+                                           color={"primary"}/>
 
                             </MUI_Grid>
                             <MUI_Grid item xs={4}>
                                 <Container>
                                     <Typography id="discrete-slider-small-steps" gutterBottom>
-                                        <Typography style={{color: 'white'}}>
+                                        <Typography >
                                             Point delta: {this.state.user_being_rated_delta.toString()}
                                         </Typography>
                                     </Typography>
@@ -285,7 +288,7 @@ class Measure extends React.Component {
                                         aria-labelledby="discrete-slider-small-steps"
                                         step={1.0}
                                         marks
-                                        color={"secondary"}
+                                        color={"primary"}
                                         min={-10.0}
                                         max={10.0}
                                         valueLabelDisplay="auto"
@@ -302,17 +305,17 @@ class Measure extends React.Component {
                 </Feed.Content>
             </Feed.Event>
         )
-    }
+    };
 
     feedEventCard = (raw_feed_item) => {
-        let post_id = raw_feed_item._id
-        let accuser = this.state.users.filter(entry => entry.user_id === raw_feed_item.accuser_id)[0].name
-        let victim = this.state.users.filter(entry => entry.user_id === raw_feed_item.victim_id)[0].name
-        let delta = raw_feed_item.delta
-        let is_verified = raw_feed_item.is_verified ? <div></div> :
-            <Button variant="contained" color={"secondary"} onClick={() => this._onVerifyDelta(post_id)}>Verify</Button>
-        let comment = raw_feed_item.comment
-        let initials = null
+        let post_id = raw_feed_item._id;
+        let accuser = this.state.users.filter(entry => entry.user_id === raw_feed_item.accuser_id)[0].name;
+        let victim = this.state.users.filter(entry => entry.user_id === raw_feed_item.victim_id)[0].name;
+        let delta = raw_feed_item.delta;
+        let is_verified = raw_feed_item.is_verified || this.state.user_obj.nickname === accuser ? <div></div> :
+            <Button variant="contained" color={"primary"} onClick={() => this._onVerifyDelta(post_id)}>Verify</Button>;
+        let comment = raw_feed_item.comment;
+        let initials = null;
         try {
             initials = accuser.split(" ")[0][0]
         } catch {
@@ -375,10 +378,11 @@ class Measure extends React.Component {
         } else {
             return (
                 <div className="full-height" style={{
-                    backgroundColor: '#73031D ',
+                    backgroundColor: '#eb4d55 ',
                     backgroundSize: "cover",
                     position: 'absolute',
-                    minHeight: '100%'
+                    minHeight: '100%',
+                    minWidth: '100%'
                 }}>
                     <Snackbar
                         anchorOrigin={{

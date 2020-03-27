@@ -292,10 +292,11 @@ class Bunker extends React.Component {
         } else {
             return (
                 <div className="full-height" style={{
-                    backgroundColor: '#73031D ',
+                    backgroundColor: '#EB4D55',
                     backgroundSize: "cover",
                     position: 'absolute',
-                    minHeight: '100%'
+                    minHeight: '100%',
+                    minWidth: '100%'
                 }}>
                     <SUI_Grid divided='vertically'>
                         <SUI_Grid.Row columns={1}>

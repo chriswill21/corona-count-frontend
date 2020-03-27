@@ -23,12 +23,12 @@ class Home extends React.Component {
         join_bunker_form_text: "",
         redirect_bunker_id: "",
         users_for_target_bunker: [],
-    }
+    };
 
     constructor(props) {
         super(props);
         let user = this.props.user;
-        console.log("user", user)
+        console.log("user", user);
         this.getUserData(user).then(r => console.log("User data retrieved"))
     }
 
@@ -225,15 +225,16 @@ class Home extends React.Component {
             return (
 
                 <div className="full-height" style={{
-                    backgroundColor: '#73031D ',
+                    backgroundColor: '#eb4d55 ',
                     backgroundSize: "cover",
                     position: 'absolute',
-                    minHeight: '100%'
+                    minHeight: '100%',
+                    minWidth: '100%'
                 }}>
                     <Grid divided='vertically'>
                         <Grid.Row columns={1}>
                             <Container>
-                                <Menu fixed='top' color={'#581845'} inverted borderless>
+                                <Menu fixed='top' inverted borderless>
                                     <Container>
                                         <Menu.Item position={"left"}>
                                             <Dropdown item icon='align justify' simple>
