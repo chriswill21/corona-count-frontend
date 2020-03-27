@@ -22,7 +22,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import socketIOClient from "socket.io-client";
 
@@ -44,6 +43,7 @@ class Measure extends React.Component {
         go_back: false,
         bunker_id: null,
         users: [],
+        past_users: [],
         user_being_rated_name_and_id: null,
         user_being_rated_comment: "",
         user_being_rated_delta: 0,
@@ -58,24 +58,6 @@ class Measure extends React.Component {
 
     ];
 
-    rows = [
-        createData('India', 'IN', 1324171354, 3287263),
-        createData('China', 'CN', 1403500365, 9596961),
-        createData('Italy', 'IT', 60483973, 301340),
-        createData('United States', 'US', 327167434, 9833520),
-        createData('Canada', 'CA', 37602103, 9984670),
-        createData('Australia', 'AU', 25475400, 7692024),
-        createData('Germany', 'DE', 83019200, 357578),
-        createData('Ireland', 'IE', 4857000, 70273),
-        createData('Mexico', 'MX', 126577691, 1972550),
-        createData('Japan', 'JP', 126317000, 377973),
-        createData('France', 'FR', 67022000, 640679),
-        createData('United Kingdom', 'GB', 67545757, 242495),
-        createData('Russia', 'RU', 146793744, 17098246),
-        createData('Nigeria', 'NG', 200962417, 923768),
-        createData('Brazil', 'BR', 210147125, 8515767),
-    ];
-
     constructor(props) {
         super(props);
         this.state = {
@@ -85,10 +67,11 @@ class Measure extends React.Component {
             measure_id: this.props.measure_id,
             measure_obj: this.props.measure_obj,
             raw_feed: [],
-            lb_rows: this.buildLeaderboard(this.props.measure_obj.ratings, this.props.users_for_bunker),
+            lb_rows: this.props.buildLeaderboard(this.props.measure_obj.ratings, this.props.users_for_bunker),
             go_back: false,
             bunker_id: this.props.bunker_id,
             users: this.props.users_for_bunker,
+            past_users: this.props.past_users_for_bunker,
             user_being_rated_name_and_id: null,
             user_being_rated_comment: "",
             user_being_rated_delta: 0,
@@ -109,7 +92,7 @@ class Measure extends React.Component {
             this.setState({
                 raw_feed: data.feed,
                 ratings: data.ratings,
-                lb_rows: this.buildLeaderboard(data.ratings, this.state.users)
+                lb_rows: this.props.buildLeaderboard(data.ratings, this.state.users)
             });
         });
     }
@@ -140,19 +123,6 @@ class Measure extends React.Component {
             feed.push(this.feedEventCard(raw_feed_item))
         });
         return feed
-    };
-
-    buildLeaderboard = (ratings, users) => {
-        let sorted_ratings = ratings;
-        sorted_ratings.sort((a, b) => (a.score > b.score) ? -1 : 1);
-        let leaderboard = [];
-        for (let i = 0; i < sorted_ratings.length; i++) {
-            let name = users.filter(entry => entry.user_id == sorted_ratings[i].user)[0].name;
-            let rank = i + 1;
-            let score = sorted_ratings[i].score;
-            leaderboard.push({rank, name, score})
-        }
-        return leaderboard
     };
 
 
@@ -309,8 +279,9 @@ class Measure extends React.Component {
 
     feedEventCard = (raw_feed_item) => {
         let post_id = raw_feed_item._id;
-        let accuser = this.state.users.filter(entry => entry.user_id === raw_feed_item.accuser_id)[0].name;
-        let victim = this.state.users.filter(entry => entry.user_id === raw_feed_item.victim_id)[0].name;
+        const all_users = this.state.users.concat(this.state.past_users);
+        let accuser = all_users.filter(entry => entry.user_id === raw_feed_item.accuser_id)[0].name;
+        let victim = all_users.filter(entry => entry.user_id === raw_feed_item.victim_id)[0].name;
         let delta = raw_feed_item.delta;
         let is_verified = raw_feed_item.is_verified || this.state.user_obj.nickname === accuser ? <div></div> :
             <Button variant="contained" color={"primary"} onClick={() => this._onVerifyDelta(post_id)}>Verify</Button>;

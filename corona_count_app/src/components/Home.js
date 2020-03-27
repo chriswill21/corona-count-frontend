@@ -1,15 +1,13 @@
 import React from 'react'
 // eslint-disable-next-line
-import {List, Segment, Dropdown, Menu, Container, Image, Divider, Grid, Header, Form, Button} from 'semantic-ui-react'
-import {useAuth0} from "../react-auth0-spa";
+import {Button, Container, Divider, Dropdown, Form, Grid, Header, List, Menu, Segment} from 'semantic-ui-react'
 import LogoutButton from "./LogoutButton";
 import axios from 'axios';
-import UserProfile from '../Hooks/RetrieveProfileGoHome'
 import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {Redirect} from "react-router-dom";
-import {Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from '@material-ui/core';
 
 class Home extends React.Component {
     state = {
@@ -119,7 +117,6 @@ class Home extends React.Component {
 
     async joinBunker(access_code) {
         // Note access code = unique bunker id
-        //TODO: WE SHOULD RETURN THE BUNKER OBJECT
         let url = config.bunkers_url + "/user/" + access_code + "/" + this.state.user_id;
         url = encodeURI(url);
         console.log('Join bunker url: ', url);

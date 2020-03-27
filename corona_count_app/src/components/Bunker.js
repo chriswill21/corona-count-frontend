@@ -1,22 +1,19 @@
 import React from 'react'
 // eslint-disable-next-line
 import {
-    List,
-    Segment,
-    Dropdown,
-    Menu,
+    Button,
     Container,
-    Image,
     Divider,
+    Dropdown,
+    Form,
     Grid as SUI_Grid,
     Header,
-    Form,
-    Button
+    List,
+    Menu,
+    Segment
 } from 'semantic-ui-react'
-import {useAuth0} from "../react-auth0-spa";
 import LogoutButton from "./LogoutButton";
 import axios from 'axios';
-import UserProfile from '../Hooks/RetrieveProfileGoHome'
 import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
@@ -25,11 +22,8 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardActionArea from '@material-ui/core/CardActionArea';
 import Typography from "@material-ui/core/Typography";
-import Flexbox from 'flexbox-react';
 import MUI_Grid from '@material-ui/core/Grid';
 import Measure from './Measure';
-import {primaryColor} from "material-kit-react/src/assets/jss/material-kit-react";
-import {colors} from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 
 class Bunker extends React.Component {
@@ -45,8 +39,9 @@ class Bunker extends React.Component {
         select_measure_name: null,
         select_measure_id: null,
         select_measure_obj: null,
-        users_for_bunker: null
-    }
+        users_for_bunker: null,
+        past_users_for_bunker: null
+    };
 
     constructor(props) {
         super(props);
@@ -66,26 +61,31 @@ class Bunker extends React.Component {
         sorted_ratings.sort((a, b) => (a.score > b.score) ? -1 : 1);
         let leaderboard = [];
         for (let i = 0; i < sorted_ratings.length; i++) {
-            let name = users.filter(entry => entry.user_id == sorted_ratings[i].user)[0].name;
-            let rank = i + 1;
-            let score = sorted_ratings[i].score;
-            leaderboard.push({rank, name, score})
+            const users_object = users.filter(entry => entry.user_id === sorted_ratings[i].user)[0];
+            if (users_object) {
+                const name = users.filter(entry => entry.user_id === sorted_ratings[i].user)[0].name;
+                const rank = i + 1;
+                const score = sorted_ratings[i].score;
+                leaderboard.push({rank, name, score})
+            }
         }
         return leaderboard
-    }
+    };
 
     // Page change prep functions
     setGoBack = () => {
         this.setState({go_back: true})
-    }
+    };
 
     setGoToMeasure = (measure_obj) => {
-        console.log("Go to measure:", measure_obj)
-        this.setState({select_measure_name: measure_obj.name})
-        this.setState({select_measure_id: measure_obj._id})
-        this.setState({select_measure_obj: measure_obj})
-        this.setState({go_to_measure: true})
-    }
+        console.log("Go to measure:", measure_obj);
+        this.setState({
+            select_measure_name: measure_obj.name,
+            select_measure_id: measure_obj._id,
+            select_measure_obj: measure_obj,
+            go_to_measure: true
+        });
+    };
 
     // Back end call functions
 
@@ -166,11 +166,14 @@ class Bunker extends React.Component {
         try {
             const response =
                 await axios.get(url).then(r => {
-                    console.log("Retrieved users from bunker: ", r.data.users)
-                    this.setState({users_for_bunker: r.data.users})
+                    console.log("Retrieved users from bunker: ", r.data.users);
+                    this.setState({
+                        users_for_bunker: r.data.users,
+                        past_users_for_bunker: r.data.past_users
+                    });
                 })
         } catch (e) {
-            console.log("Failed getting users from bunker", e)
+            console.log("Failed getting users from bunker", e);
             return null
         }
     }
@@ -185,11 +188,17 @@ class Bunker extends React.Component {
 
         // Set bunker users
         try {
-            this.setState({users_for_bunker: this.props.location.state.users_for_bunker})
+            this.setState({
+                users_for_bunker: this.props.location.state.users_for_bunker,
+                past_users_for_bunker: this.props.past_users_for_bunker
+            })
         } catch (e) { // Transitioning from a measure
-            this.setState({users_for_bunker: this.props.users_for_bunker})
+            this.setState({
+                users_for_bunker: this.props.users_for_bunker,
+                past_users_for_bunker: this.props.past_users_for_bunker
+            })
         }
-        this.setState({bunker_name: this.state.bunker.name})
+        this.setState({bunker_name: this.state.bunker.name});
 
         console.log("User object: ", this.state.user_obj)
     }
@@ -284,10 +293,15 @@ class Bunker extends React.Component {
             )
         } else if (this.state.go_to_measure) {
             return (
-                <Measure measure_name={this.state.select_measure_name} measure_id={this.state.select_measure_id}
+                <Measure measure_name={this.state.select_measure_name}
+                         measure_id={this.state.select_measure_id}
                          measure_obj={this.state.select_measure_obj}
-                         user_obj={this.state.user_obj} bunker_id={this.state.bunker._id}
-                         users_for_bunker={this.state.users_for_bunker}/>
+                         user_obj={this.state.user_obj}
+                         bunker_id={this.state.bunker._id}
+                         users_for_bunker={this.state.users_for_bunker}
+                         past_users_for_bunker={this.state.past_users_for_bunker}
+                         buildLeaderboard={this.buildLeaderboard}
+                />
             )
         } else {
             return (
