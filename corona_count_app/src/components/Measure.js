@@ -49,7 +49,7 @@ class Measure extends React.Component {
         user_being_rated_delta: 0,
         snackbar_open: false,
         endpoint: "http://127.0.0.1:4000"
-    }
+    };
 
     columns = [
         {id: 'rank', label: 'Rank', minWidth: 170},
@@ -94,7 +94,7 @@ class Measure extends React.Component {
             user_being_rated_delta: 0,
             snackbar_open: false,
             endpoint: "http://127.0.0.1:4000",
-        }
+        };
 
         this.getFeed(this.state.measure_id).then()
     }
@@ -116,7 +116,7 @@ class Measure extends React.Component {
 
     setGoBack = () => {
         this.setState({go_back: true})
-    }
+    };
 
     handleUserBeingRatedSelectorChange = event => {
         this.setState({user_being_rated_name_and_id: event.target.value});
@@ -124,23 +124,23 @@ class Measure extends React.Component {
 
     handleSnackbarOpen = () => {
         this.setState({snackbar_open: true})
-    }
+    };
 
     handleSnackbarClose = () => {
         this.setState({snackbar_open: false})
-    }
+    };
 
     deltaSliderValueChange = (value) => {
         this.setState({user_being_rated_delta: value.toString()})
-    }
+    };
 
     buildFeed = () => {
         let feed = [this.postEventCard()]
         this.state.raw_feed.forEach(raw_feed_item => {
             feed.push(this.feedEventCard(raw_feed_item))
-        })
+        });
         return feed
-    }
+    };
 
     buildLeaderboard = (ratings, users) => {
         let sorted_ratings = ratings;
@@ -153,7 +153,7 @@ class Measure extends React.Component {
             leaderboard.push({rank, name, score})
         }
         return leaderboard
-    }
+    };
 
 
     // On click functions
@@ -180,7 +180,7 @@ class Measure extends React.Component {
     _onVerifyDelta = (post_id) => {
         // this.state.raw_feed.filter((entry => entry._id === post_id))[0].is_verified = true
         this.verifyPost(post_id).then()
-    }
+    };
 
     // Back end async functions
 
@@ -278,7 +278,7 @@ class Measure extends React.Component {
                             <MUI_Grid item xs={4}>
                                 <Container>
                                     <Typography id="discrete-slider-small-steps" gutterBottom>
-                                        <Typography>
+                                        <Typography style={{color: '#353535'}}>
                                             Point delta: {this.state.user_being_rated_delta.toString()}
                                         </Typography>
                                     </Typography>

@@ -9,7 +9,7 @@ import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {Redirect} from "react-router-dom";
-import {Typography} from '@material-ui/core';
+import {Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
 
 class Home extends React.Component {
     state = {
@@ -23,6 +23,7 @@ class Home extends React.Component {
         join_bunker_form_text: "",
         redirect_bunker_id: "",
         users_for_target_bunker: [],
+        bunker_to_leave: null
     };
 
     constructor(props) {
@@ -33,7 +34,7 @@ class Home extends React.Component {
     }
 
     async setRedirect(bunker) {
-        console.log("clicked on a bunker", bunker)
+        console.log("clicked on a bunker", bunker);
         // this.setState({
         //     redirect_bunker_id: bunker._id
         // })
@@ -55,7 +56,15 @@ class Home extends React.Component {
         }
     }
 
-    handleItemClick = (e, {name}) => this.setState({add_bunker_tab: name})
+    handleItemClick = (e, {name}) => this.setState({add_bunker_tab: name});
+
+    handleLeaveBunkerClickOpen = (bunker) => {
+        this.setState({bunker_to_leave: bunker})
+    };
+
+    handleLeaveBunkerClickClose = () => {
+        this.setState({bunker_to_leave: null})
+    };
 
     async getUserData(user) {
         // Get user data from backend
@@ -72,7 +81,8 @@ class Home extends React.Component {
             this.setState({bunkers: loadedBunkers})
         } catch (e) {
             // If no data --> postNewUser --> bunker is empty
-            console.log(e.response)
+            console.log("HERERERE");
+            console.log(e);
             this.postNewUser(user);
         }
 
@@ -110,28 +120,44 @@ class Home extends React.Component {
     async joinBunker(access_code) {
         // Note access code = unique bunker id
         //TODO: WE SHOULD RETURN THE BUNKER OBJECT
-        let url = config.bunkers_url + "/user/" + access_code + "/" + this.state.user_id
-        url = encodeURI(url)
-        console.log('Join bunker url: ', url)
+        let url = config.bunkers_url + "/user/" + access_code + "/" + this.state.user_id;
+        url = encodeURI(url);
+        console.log('Join bunker url: ', url);
 
         try {
             const response =
-                await axios.post(url).then(r => this.setRedirect(r.data.bunker))
+                await axios.post(url).then(r => this.setRedirect(r.data.bunker));
             console.log("Bunker data: ", response.data)
         } catch (e) {
-            console.log(e => console.log("Bunker doesn't exist"))
+            console.log("Bunker doesn't exist", e.response);
             this.setState({join_bunker_error: true})
         }
 
     }
 
+    async leaveBunker(bunker_id) {
+        let url = config.bunkers_url + "/user/" + bunker_id + "/" + this.state.user_id;
+        url = encodeURI(url);
+        console.log('Remove user from bunker: ', url);
+
+        try {
+            const response =
+                await axios.delete(url);
+            console.log("Successfully left Bunker: ", response.success);
+            this.setState({bunker_to_leave: null})
+            this.getUserData(this.props.user).then(r => console.log("User data retrieved"))
+        } catch (e) {
+            console.log("Error leaving bunker: ", e.response)
+        }
+    }
+
     __onCreateBunkerFormChange = (value) => {
         this.setState({create_bunker_form_text: value})
-    }
+    };
 
     __onJoinBunkerFormChange = (value) => {
         this.setState({join_bunker_form_text: value})
-    }
+    };
 
     __onAddBunkerClick = () => {
         if (this.state.add_bunker_tab === "join") {
@@ -139,7 +165,7 @@ class Home extends React.Component {
         } else {
             this.createNewBunker(this.state.create_bunker_form_text).then(r => console.log("Attempt created new bunker", r))
         }
-    }
+    };
 
     addBunkerCard = () => {
         if (this.state.add_bunker_tab === "join") {
@@ -155,7 +181,7 @@ class Home extends React.Component {
                             onChange={(e, {value}) => this.__onCreateBunkerFormChange(value)}/>
             )
         }
-    }
+    };
 
     addBunkerModalHeader = () => {
         if (!this.state.join_bunker_error) {
@@ -168,35 +194,36 @@ class Home extends React.Component {
                     added to this bunker.</Header>
             )
         }
-    }
+    };
 
     renderEmptyBunkerListItem = () => {
         return (
             <List.Item>
                 <List.Icon name='certificate' size='large' verticalAlign='middle'/>
                 <List.Content>
-                    <List.Header as='a'>You're in no bunkers!</List.Header>
-                    <List.Description as='a'>Get to safety</List.Description>
+                    <List.Header>You're in no bunkers!</List.Header>
+                    <List.Description>Get to safety</List.Description>
                 </List.Content>
             </List.Item>
         );
-    }
+    };
+
     renderBunkerListItem = (bunker) => {
         return (
-            <List.Item onClick={() => {
-                this.setRedirect(bunker)
-            }}>
+            <List.Item>
                 <List.Icon name='certificate' size='large' verticalAlign='middle'/>
                 <List.Content>
-                    <List.Header as='a'>{bunker.name}</List.Header>
+                    <List.Header as='a' onClick={() => {this.setRedirect(bunker)}}>{bunker.name}</List.Header>
+                    <List.Description as='a' onClick={() => {this.handleLeaveBunkerClickOpen(bunker._id)}}>Leave
+                        Bunker</List.Description>
                 </List.Content>
             </List.Item>
         );
-    }
+    };
 
     genBunkerList = () => {
-        let data = []
-        if (this.state.bunkers.length == 0) {
+        let data = [];
+        if (this.state.bunkers.length === 0) {
             data.push(this.renderEmptyBunkerListItem())
         } else {
             this.state.bunkers.forEach(bunker => data.push(this.renderBunkerListItem(bunker)))
@@ -207,13 +234,13 @@ class Home extends React.Component {
 
     render() {
 
-        let bunkerDataForDisplay = this.genBunkerList()
-        const {add_bunker_tab} = this.state.add_bunker_tab
+        let bunkerDataForDisplay = this.genBunkerList();
+        const {add_bunker_tab} = this.state.add_bunker_tab;
 
         if (this.state.redirect_bunker_id !== "") {
-            let bunker_id = this.state.redirect_bunker_id
-            let user_obj = this.state.user_obj
-            let users_for_bunker = this.state.users_for_target_bunker
+            let bunker_id = this.state.redirect_bunker_id;
+            let user_obj = this.state.user_obj;
+            let users_for_bunker = this.state.users_for_target_bunker;
             return (
                 < Redirect to={{
                     pathname: "/bunker",
@@ -302,8 +329,29 @@ class Home extends React.Component {
                             </Container>
                         </Grid.Row>
                     </Grid>
-
-
+                    <Dialog
+                        open={this.state.bunker_to_leave != null}
+                        onClose={this.handleLeaveBunkerClickClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle
+                            id='alert-dialog-title'>{"Are you sure you want to leave this bunker?"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id='alert-dialog-description'>
+                                If you leave this bunker, your rankings in all its measures will be lost, and you will
+                                have to rejoin as a new member.
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.handleLeaveBunkerClickClose}>
+                                Cancel
+                            </Button>
+                            <Button onClick={() => this.leaveBunker(this.state.bunker_to_leave)} autoFocus>
+                                Leave Bunker
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             )
         }
