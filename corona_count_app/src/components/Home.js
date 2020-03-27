@@ -54,7 +54,11 @@ class Home extends React.Component {
         }
     }
 
-    handleItemClick = (e, {name}) => this.setState({add_bunker_tab: name});
+    handleItemClick = (e, {name}) => this.setState({
+        add_bunker_tab: name,
+        create_bunker_form_text: "",
+        join_bunker_form_text: ""
+    });
 
     handleLeaveBunkerClickOpen = (bunker) => {
         this.setState({bunker_to_leave: bunker})
@@ -79,7 +83,6 @@ class Home extends React.Component {
             this.setState({bunkers: loadedBunkers})
         } catch (e) {
             // If no data --> postNewUser --> bunker is empty
-            console.log("HERERERE");
             console.log(e);
             this.postNewUser(user);
         }
@@ -104,7 +107,6 @@ class Home extends React.Component {
 
     async createNewBunker(name) {
         //TODO: Duplicate bunker names shouldn't exit
-        //TODO: WE SHOULD RETURN THE BUNKER OBJECT WHEN WE CREATE A NEW ONE
         let url = config.bunkers_url
         url = encodeURI(url)
         console.log('Post new bunker url: ', url)
@@ -112,7 +114,7 @@ class Home extends React.Component {
             url,
             {name: name.toString(), users: [this.state.user_id], measures: []},
             {headers: {'Content-Type': 'application/json'}}
-        ).then(r => this.setRedirect(r.data.bunker))
+        ).catch(e => console.log(e.response)).then(r => this.setRedirect(r.data.bunker))
     }
 
     async joinBunker(access_code) {
@@ -158,9 +160,14 @@ class Home extends React.Component {
 
     __onAddBunkerClick = () => {
         if (this.state.add_bunker_tab === "join") {
-            this.joinBunker(this.state.join_bunker_form_text).then(r => console.log("Attempt join new bunker", r))
+            if (this.state.join_bunker_form_text) {
+                this.joinBunker(this.state.join_bunker_form_text).then(r => console.log("Attempt join new bunker", r))
+            }
+
         } else {
-            this.createNewBunker(this.state.create_bunker_form_text).then(r => console.log("Attempt created new bunker", r))
+            if (this.state.create_bunker_form_text) {
+                this.createNewBunker(this.state.create_bunker_form_text).then(r => console.log("Attempt created new bunker", r))
+            }
         }
     };
 
@@ -169,13 +176,15 @@ class Home extends React.Component {
             return (
                 <Form.Input fluid icon='hand rock' iconPosition='left'
                             placeholder='Bunker access code'
-                            onChange={(e, {value}) => this.__onJoinBunkerFormChange(value)}/>
+                            onChange={(e, {value}) => this.__onJoinBunkerFormChange(value)}
+                            value={this.state.join_bunker_form_text}/>
             )
         } else {
             return (
                 <Form.Input fluid icon='hand rock' iconPosition='left'
                             placeholder='New bunker name'
-                            onChange={(e, {value}) => this.__onCreateBunkerFormChange(value)}/>
+                            onChange={(e, {value}) => this.__onCreateBunkerFormChange(value)}
+                            value={this.state.create_bunker_form_text}/>
             )
         }
     };
@@ -210,8 +219,12 @@ class Home extends React.Component {
             <List.Item>
                 <List.Icon name='certificate' size='large' verticalAlign='middle'/>
                 <List.Content>
-                    <List.Header as='a' onClick={() => {this.setRedirect(bunker)}}>{bunker.name}</List.Header>
-                    <List.Description as='a' onClick={() => {this.handleLeaveBunkerClickOpen(bunker._id)}}>Leave
+                    <List.Header as='a' onClick={() => {
+                        this.setRedirect(bunker)
+                    }}>{bunker.name}</List.Header>
+                    <List.Description as='a' onClick={() => {
+                        this.handleLeaveBunkerClickOpen(bunker._id)
+                    }}>Leave
                         Bunker</List.Description>
                 </List.Content>
             </List.Item>
