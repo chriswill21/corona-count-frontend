@@ -9,7 +9,7 @@ import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {Redirect} from "react-router-dom";
-import { Typography } from '@material-ui/core';
+import {Typography} from '@material-ui/core';
 
 class Home extends React.Component {
     state = {
@@ -250,44 +250,44 @@ class Home extends React.Component {
                                                 Corona Count
                                             </Typography>
                                         </Menu.Item>
-                                        <Menu.Item as='a' position={"right"}>
-                                            <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Bunker
-                                            </Segment.Inline>}>
-                                                <Modal.Header>Add a new bunker</Modal.Header>
-                                                <Modal.Content>
-                                                    <Segment vertical>
-                                                        <Modal.Description>
-                                                            {this.addBunkerModalHeader()}
-                                                            <p>
-                                                                Create a bunker and invite your friends to stay safe and
-                                                                start
-                                                                slandering!
-                                                            </p>
-                                                        </Modal.Description>
-                                                        <Divider/>
-                                                        <Menu tabular>
-                                                            <Menu.Item
-                                                                name='join'
-                                                                active={this.state.add_bunker_tab === "join"}
-                                                                onClick={this.handleItemClick}
-                                                            />
-                                                            <Menu.Item
-                                                                name='create'
-                                                                active={this.state.add_bunker_tab === "create"}
-                                                                onClick={this.handleItemClick}
-                                                            />
-                                                        </Menu>
-                                                        {this.addBunkerCard()}
-                                                        <Divider/>
-                                                        <Button color='#581845' fluid size='large'
-                                                                onClick={this.__onAddBunkerClick}>
-                                                            Esketit
-                                                        </Button>
-                                                    </Segment>
-                                                </Modal.Content>
-                                            </Modal>
+                                        <Modal trigger={<Menu.Item as='a' position={"right"}>
+                                            <Segment.Inline> <Icon name='add'/> Add Bunker
+                                            </Segment.Inline>
+                                        </Menu.Item>}>
+                                            <Modal.Header>Add a new bunker</Modal.Header>
+                                            <Modal.Content>
+                                                <Segment vertical>
+                                                    <Modal.Description>
+                                                        {this.addBunkerModalHeader()}
+                                                        <p>
+                                                            Create a bunker and invite your friends to stay safe and
+                                                            start
+                                                            slandering!
+                                                        </p>
+                                                    </Modal.Description>
+                                                    <Divider/>
+                                                    <Menu tabular>
+                                                        <Menu.Item
+                                                            name='join'
+                                                            active={this.state.add_bunker_tab === "join"}
+                                                            onClick={this.handleItemClick}
+                                                        />
+                                                        <Menu.Item
+                                                            name='create'
+                                                            active={this.state.add_bunker_tab === "create"}
+                                                            onClick={this.handleItemClick}
+                                                        />
+                                                    </Menu>
+                                                    {this.addBunkerCard()}
+                                                    <Divider/>
+                                                    <Button color='#581845' fluid size='large'
+                                                            onClick={this.__onAddBunkerClick}>
+                                                        Esketit
+                                                    </Button>
+                                                </Segment>
+                                            </Modal.Content>
+                                        </Modal>
 
-                                        </Menu.Item>
                                     </Container>
                                 </Menu>
                             </Container>

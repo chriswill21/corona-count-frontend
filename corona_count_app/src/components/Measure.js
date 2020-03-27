@@ -278,7 +278,7 @@ class Measure extends React.Component {
                             <MUI_Grid item xs={4}>
                                 <Container>
                                     <Typography id="discrete-slider-small-steps" gutterBottom>
-                                        <Typography >
+                                        <Typography>
                                             Point delta: {this.state.user_being_rated_delta.toString()}
                                         </Typography>
                                     </Typography>
@@ -416,50 +416,50 @@ class Measure extends React.Component {
                                                 {this.state.measure_name}
                                             </Typography>
                                         </Menu.Item>
-                                        <Menu.Item as='a' header position={"right"}>
-                                            <Modal trigger={<Segment.Inline> <Icon name='add'/> Leaderboard, babyy
-                                            </Segment.Inline>}>
-                                                <Modal.Header>Leaderboard</Modal.Header>
-                                                <Modal.Content>
-                                                    <TableContainer>
-                                                        <Table stickyHeader aria-label="sticky table">
-                                                            <TableHead>
-                                                                <TableRow>
-                                                                    {this.columns.map(column => (
-                                                                        <TableCell
-                                                                            key={column.id}
-                                                                            align={column.align}
-                                                                            style={{minWidth: column.minWidth}}
-                                                                        >
-                                                                            {column.label}
-                                                                        </TableCell>
-                                                                    ))}
-                                                                </TableRow>
-                                                            </TableHead>
-                                                            <TableBody>
-                                                                {this.state.lb_rows.map(row => {
-                                                                    return (
-                                                                        <TableRow hover role="checkbox" tabIndex={-1}
-                                                                                  key={row.code}>
-                                                                            {this.columns.map(column => {
-                                                                                const value = row[column.id];
-                                                                                return (
-                                                                                    <TableCell key={column.id}
-                                                                                               align={column.align}>
-                                                                                        {value}
-                                                                                    </TableCell>
-                                                                                );
-                                                                            })}
-                                                                        </TableRow>
-                                                                    );
-                                                                })}
-                                                            </TableBody>
-                                                        </Table>
-                                                    </TableContainer>
-                                                </Modal.Content>
-                                            </Modal>
+                                        <Modal trigger={<Menu.Item as='a' header position={"right"}>
+                                            <Segment.Inline> <Icon name='add'/> Leaderboard, babyy
+                                            </Segment.Inline>
+                                        </Menu.Item>}>
+                                            <Modal.Header>Leaderboard</Modal.Header>
+                                            <Modal.Content>
+                                                <TableContainer>
+                                                    <Table stickyHeader aria-label="sticky table">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                {this.columns.map(column => (
+                                                                    <TableCell
+                                                                        key={column.id}
+                                                                        align={column.align}
+                                                                        style={{minWidth: column.minWidth}}
+                                                                    >
+                                                                        {column.label}
+                                                                    </TableCell>
+                                                                ))}
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {this.state.lb_rows.map(row => {
+                                                                return (
+                                                                    <TableRow hover role="checkbox" tabIndex={-1}
+                                                                              key={row.code}>
+                                                                        {this.columns.map(column => {
+                                                                            const value = row[column.id];
+                                                                            return (
+                                                                                <TableCell key={column.id}
+                                                                                           align={column.align}>
+                                                                                    {value}
+                                                                                </TableCell>
+                                                                            );
+                                                                        })}
+                                                                    </TableRow>
+                                                                );
+                                                            })}
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                            </Modal.Content>
+                                        </Modal>
 
-                                        </Menu.Item>
                                     </Container>
                                 </Menu>
                             </Container>

@@ -254,7 +254,7 @@ class Bunker extends React.Component {
                                 <br/>
                                 2. {lb[1] ? lb[1].name : " "}
                                 <br/>
-                                3. {lb[2] ? lb[2].name: " "}
+                                3. {lb[2] ? lb[2].name : " "}
 
                             </Typography>
                         </CardContent>
@@ -321,30 +321,31 @@ class Bunker extends React.Component {
                                             </Typography>
 
                                         </Menu.Item>
-                                        <Menu.Item as='a' header position={"right"}>
-                                            <Modal trigger={<Segment.Inline> <Icon name='add'/> Add Measure
-                                            </Segment.Inline>}>
-                                                <Modal.Header>Add a new measure, dawggg</Modal.Header>
-                                                <Modal.Content>
-                                                    <Segment vertical>
-                                                        <Modal.Description>
-                                                            {this.addBunkerModalHeader()}
-                                                            <p>
-                                                                Just dooo it!... Create a new measure!
-                                                            </p>
-                                                        </Modal.Description>
-                                                        <Divider/>
-                                                        {this.addMeasureCard()}
-                                                        <Divider/>
-                                                        <Button color='#581845' fluid size='large'
-                                                                onClick={this.__onAddMeasureClick}>
-                                                            Esketit
-                                                        </Button>
-                                                    </Segment>
-                                                </Modal.Content>
-                                            </Modal>
 
-                                        </Menu.Item>
+                                        <Modal trigger={<Menu.Item as='a' header position={"right"}>
+                                            <Segment.Inline> <Icon name='add'/> Add Measure
+                                            </Segment.Inline>
+                                        </Menu.Item>}>
+                                            <Modal.Header>Add a new measure, dawggg</Modal.Header>
+                                            <Modal.Content>
+                                                <Segment vertical>
+                                                    <Modal.Description>
+                                                        {this.addBunkerModalHeader()}
+                                                        <p>
+                                                            Just dooo it!... Create a new measure!
+                                                        </p>
+                                                    </Modal.Description>
+                                                    <Divider/>
+                                                    {this.addMeasureCard()}
+                                                    <Divider/>
+                                                    <Button color='#581845' fluid size='large'
+                                                            onClick={this.__onAddMeasureClick}>
+                                                        Esketit
+                                                    </Button>
+                                                </Segment>
+                                            </Modal.Content>
+                                        </Modal>
+
                                     </Container>
                                 </Menu>
                             </Container>
