@@ -7,7 +7,18 @@ import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {Redirect} from "react-router-dom";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from '@material-ui/core';
+import {
+    AppBar,
+    Box,
+    Tabs,
+    Tab,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Typography, TextField
+} from '@material-ui/core';
 
 class Home extends React.Component {
     state = {
@@ -15,13 +26,14 @@ class Home extends React.Component {
         user_obj: null,
         user_name: null,
         user_id: null,
-        add_bunker_tab: "join",
+        add_bunker_tab: 0,
         join_bunker_error: false,
         create_bunker_form_text: "",
         join_bunker_form_text: "",
         redirect_bunker_id: "",
         users_for_target_bunker: [],
-        bunker_to_leave: null
+        bunker_to_leave: null,
+        adding_bunker: false
     };
 
     constructor(props) {
@@ -67,6 +79,24 @@ class Home extends React.Component {
     handleLeaveBunkerClickClose = () => {
         this.setState({bunker_to_leave: null})
     };
+
+    TabPanel = (props) => {
+        const {children, value, index, ...other} = props;
+
+        return (
+            <Typography
+                component="div"
+                role="tabpanel"
+                hidden={value !== index}
+                id={`add-bunker-tabpanel-${index}`}
+                aria-labelledby={`add-bunker-tab-${index}`}
+                {...other}
+            >
+                {value === index && <Box p={3}>{children}</Box>}
+            </Typography>
+        );
+    };
+
 
     async getUserData(user) {
         // Get user data from backend
@@ -159,7 +189,7 @@ class Home extends React.Component {
     };
 
     __onAddBunkerClick = () => {
-        if (this.state.add_bunker_tab === "join") {
+        if (this.state.add_bunker_tab === 0) {
             if (this.state.join_bunker_form_text) {
                 this.joinBunker(this.state.join_bunker_form_text).then(r => console.log("Attempt join new bunker", r))
             }
@@ -172,19 +202,29 @@ class Home extends React.Component {
     };
 
     addBunkerCard = () => {
-        if (this.state.add_bunker_tab === "join") {
+        if (this.state.add_bunker_tab === 0) {
             return (
-                <Form.Input fluid icon='hand rock' iconPosition='left'
-                            placeholder='Bunker access code'
-                            onChange={(e, {value}) => this.__onJoinBunkerFormChange(value)}
-                            value={this.state.join_bunker_form_text}/>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Bunker access code"
+                    type="text"
+                    fullWidth
+                    onChange={(event) => this.__onJoinBunkerFormChange(event.target.value)}
+                />
             )
         } else {
             return (
-                <Form.Input fluid icon='hand rock' iconPosition='left'
-                            placeholder='New bunker name'
-                            onChange={(e, {value}) => this.__onCreateBunkerFormChange(value)}
-                            value={this.state.create_bunker_form_text}/>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="New bunker name"
+                    type="text"
+                    fullWidth
+                    onChange={(event) => this.__onCreateBunkerFormChange(event.target.value)}
+                />
             )
         }
     };
@@ -192,12 +232,12 @@ class Home extends React.Component {
     addBunkerModalHeader = () => {
         if (!this.state.join_bunker_error) {
             return (
-                <Header>Time is of the essence... get to safety!</Header>
+                <Typography><b>Time is of the essence... get to safety!</b></Typography>
             )
         } else {
             return (
-                <Header color={"red"}>Bunker join error! Either your access code is incorrect, or you've already been
-                    added to this bunker.</Header>
+                <Typography color={"secondary"}><b>Bunker join error! Either your access code is incorrect, or you've already been
+                    added to this bunker.</b></Typography>
             )
         }
     };
@@ -245,7 +285,6 @@ class Home extends React.Component {
     render() {
 
         let bunkerDataForDisplay = this.genBunkerList();
-        const {add_bunker_tab} = this.state.add_bunker_tab;
 
         if (this.state.redirect_bunker_id !== "") {
             let bunker_id = this.state.redirect_bunker_id;
@@ -287,44 +326,56 @@ class Home extends React.Component {
                                                 Corona Count
                                             </Typography>
                                         </Menu.Item>
-                                        <Modal trigger={<Menu.Item as='a' position={"right"}>
-                                            <Segment.Inline> <Icon name='add'/> Add Bunker
+                                        <Menu.Item as='a' position={"right"}
+                                                   onClick={() => this.setState({adding_bunker: true})}>
+                                            <Segment.Inline> <Icon name='add'/> Add Bunker...
                                             </Segment.Inline>
-                                        </Menu.Item>}>
-                                            <Modal.Header>Add a new bunker</Modal.Header>
-                                            <Modal.Content>
-                                                <Segment vertical>
-                                                    <Modal.Description>
-                                                        {this.addBunkerModalHeader()}
-                                                        <p>
-                                                            Create a bunker and invite your friends to stay safe and
-                                                            start
-                                                            slandering!
-                                                        </p>
-                                                    </Modal.Description>
-                                                    <Divider/>
-                                                    <Menu tabular>
-                                                        <Menu.Item
-                                                            name='join'
-                                                            active={this.state.add_bunker_tab === "join"}
-                                                            onClick={this.handleItemClick}
-                                                        />
-                                                        <Menu.Item
-                                                            name='create'
-                                                            active={this.state.add_bunker_tab === "create"}
-                                                            onClick={this.handleItemClick}
-                                                        />
-                                                    </Menu>
-                                                    {this.addBunkerCard()}
-                                                    <Divider/>
-                                                    <Button color='#581845' fluid size='large'
-                                                            onClick={this.__onAddBunkerClick}>
-                                                        Esketit
-                                                    </Button>
-                                                </Segment>
-                                            </Modal.Content>
-                                        </Modal>
-
+                                        </Menu.Item>
+                                        <Dialog open={this.state.adding_bunker}
+                                                onClose={() => this.setState({adding_bunker: false})}
+                                                aria-labelledby='add-bunker-title'
+                                                aria-describedby='add-bunker-description'
+                                                fullWidth
+                                        >
+                                            <DialogTitle id='add-bunker-title'>Add a new bunker</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText id='add-bunker-description'>
+                                                    {this.addBunkerModalHeader()}
+                                                    Create a bunker and invite your friends to stay safe and start
+                                                    slandering!
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <AppBar position='static'>
+                                                <Tabs value={this.state.add_bunker_tab}
+                                                      onChange={(event, newValue) => {
+                                                          this.setState({
+                                                              add_bunker_tab: newValue,
+                                                              create_bunker_form_text: "",
+                                                              join_bunker_form_text: ""
+                                                          })
+                                                      }}
+                                                      aria-label="add-bunker-tabs"
+                                                >
+                                                    <Tab label={"Join"}
+                                                         id={'add-bunker-0'}
+                                                         aria-controls={'add-bunker-tabpanel-0'}/>
+                                                    <Tab label={"Create"}
+                                                         id={'add-bunker-1'}
+                                                         aria-controls={'add-bunker-tabpanel-1'}/>
+                                                </Tabs>
+                                            </AppBar>
+                                            <this.TabPanel value={this.state.add_bunker_tab} index={0}>
+                                                {this.addBunkerCard()}
+                                            </this.TabPanel>
+                                            <this.TabPanel value={this.state.add_bunker_tab} index={1}>
+                                                {this.addBunkerCard()}
+                                            </this.TabPanel>
+                                            <DialogActions>
+                                                <Button onClick={this.__onAddBunkerClick}>
+                                                    Add
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
                                     </Container>
                                 </Menu>
                             </Container>
@@ -363,9 +414,9 @@ class Home extends React.Component {
                         </DialogActions>
                     </Dialog>
                 </div>
-            )
+        )
         }
-    }
-}
+        }
+        }
 
-export default Home
+        export default Home

@@ -1,22 +1,10 @@
 import React from 'react'
 // eslint-disable-next-line
-import {
-    Button,
-    Container,
-    Divider,
-    Dropdown,
-    Form,
-    Grid as SUI_Grid,
-    Header,
-    List,
-    Menu,
-    Segment
-} from 'semantic-ui-react'
+import {Button, Container, Dropdown, Form, Grid as SUI_Grid, Header, List, Menu} from 'semantic-ui-react'
 import LogoutButton from "./LogoutButton";
 import axios from 'axios';
 import config from '../url_config.json';
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
-import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import {Redirect} from "react-router-dom";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -25,6 +13,7 @@ import Typography from "@material-ui/core/Typography";
 import MUI_Grid from '@material-ui/core/Grid';
 import Measure from './Measure';
 import Paper from "@material-ui/core/Paper";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@material-ui/core";
 
 class Bunker extends React.Component {
     state = {
@@ -40,7 +29,9 @@ class Bunker extends React.Component {
         select_measure_id: null,
         select_measure_obj: null,
         users_for_bunker: null,
-        past_users_for_bunker: null
+        past_users_for_bunker: null,
+        adding_measure: false,
+        inviting_others: false
     };
 
     constructor(props) {
@@ -93,7 +84,7 @@ class Bunker extends React.Component {
         //TODO: Duplicate measure names shouldn't exit
         let url = config.bunkers_url + "/measure/" + this.state.bunker._id + "/" + name + "/" + default_score
         url = encodeURI(url)
-        console.log('Post new measure url: ', url)
+        console.log('Post new measure url: ', url);
         try {
             const response = await axios.post(
                 url,
@@ -336,30 +327,70 @@ class Bunker extends React.Component {
 
                                         </Menu.Item>
 
-                                        <Modal trigger={<Menu.Item as='a' header position={"right"}>
-                                            <Segment.Inline> <Icon name='add'/> Add Measure
-                                            </Segment.Inline>
-                                        </Menu.Item>}>
-                                            <Modal.Header>Add a new measure, dawggg</Modal.Header>
-                                            <Modal.Content>
-                                                <Segment vertical>
-                                                    <Modal.Description>
-                                                        {this.addBunkerModalHeader()}
-                                                        <p>
-                                                            Just dooo it!... Create a new measure!
-                                                        </p>
-                                                    </Modal.Description>
-                                                    <Divider/>
-                                                    {this.addMeasureCard()}
-                                                    <Divider/>
-                                                    <Button color='#581845' fluid size='large'
-                                                            onClick={this.__onAddMeasureClick}>
-                                                        Esketit
-                                                    </Button>
-                                                </Segment>
-                                            </Modal.Content>
-                                        </Modal>
+                                        <Menu.Item position={"right"}>
+                                            <Dropdown item icon='align justify' position={'right'} simple>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item
+                                                        onClick={() => this.setState({adding_measure: true})}>
+                                                        <Icon name='add'/>Add Measure...
+                                                    </Dropdown.Item>}>
+                                                    <Dropdown.Item
+                                                        onClick={() => this.setState({inviting_others: true})}>
+                                                        <Icon name='add'/>Invite Others...
+                                                    </Dropdown.Item>
 
+                                                    <Dialog open={this.state.adding_measure}
+                                                            onClose={() => this.setState({adding_measure: false})}
+                                                            aria-labelledby="add-measure-title"
+                                                            aria-describedby="add-measure-description"
+                                                    >
+                                                        <DialogTitle id='add-measure-title'>{"Add a measure"}</DialogTitle>
+                                                        <DialogContent>
+                                                            <DialogContentText id='add-measure-description'>
+                                                                Create a new measure to start ranking the survivors in
+                                                                your bunker!
+                                                            </DialogContentText>
+                                                            <TextField
+                                                                autoFocus
+                                                                margin="dense"
+                                                                id="name"
+                                                                label="Measure name"
+                                                                type='text'
+                                                                fullWidth
+                                                                onChange={(event) => this.__onCreateMeasureNameFormChange(event.target.value)}
+                                                            />
+                                                        </DialogContent>
+                                                        <DialogActions>
+                                                            <Button onClick={this.__onAddMeasureClick}>
+                                                                Create
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                    <Dialog open={this.state.inviting_others}
+                                                            onClose={() => this.setState({inviting_others: false})}
+                                                            aria-labelledby='inviting-others-title'
+                                                            aria-describedby='inviting-others-description'
+                                                    >
+                                                        <DialogTitle id='inviting-others-title'>Invite
+                                                            Others</DialogTitle>
+                                                        <DialogContent>
+                                                            <DialogContentText id='inviting-others-description'>
+                                                                Copy and send the access code below to your friends so
+                                                                they can join you in your bunker and help you survive!
+                                                            </DialogContentText>
+                                                            <Typography color={'primary'} variant={'h5'}
+                                                                        align={'center'}><b>{this.state.bunker._id}</b></Typography>
+                                                        </DialogContent>
+                                                        <DialogActions>
+                                                            <Button
+                                                                onClick={() => this.setState({inviting_others: false})}>
+                                                                Done
+                                                            </Button>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </Menu.Item>
                                     </Container>
                                 </Menu>
                             </Container>

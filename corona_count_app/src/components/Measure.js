@@ -1,14 +1,12 @@
 import React from "react";
 import Feed from "semantic-ui-react/dist/commonjs/views/Feed";
-import {Container, Divider, Dropdown, Grid as SUI_Grid, Menu, Segment} from "semantic-ui-react";
+import {Button, Container, Divider, Dropdown, Grid as SUI_Grid, Menu, Segment} from "semantic-ui-react";
 import LogoutButton from "./LogoutButton";
-import Modal from "semantic-ui-react/dist/commonjs/modules/Modal";
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Slider from '@material-ui/core/Slider';
-import Button from '@material-ui/core/Button';
 import MUI_Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import Bunker from './Bunker';
@@ -17,13 +15,20 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Snackbar from '@material-ui/core/Snackbar';
 import config from "../url_config";
 import axios from "axios";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import socketIOClient from "socket.io-client";
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@material-ui/core";
 
 
 function createData(name, code, population, size) {
@@ -48,7 +53,8 @@ class Measure extends React.Component {
         user_being_rated_comment: "",
         user_being_rated_delta: 0,
         snackbar_open: false,
-        endpoint: "http://127.0.0.1:4000"
+        endpoint: "http://127.0.0.1:4000",
+        viewing_leaderboard: false
     };
 
     columns = [
@@ -228,6 +234,7 @@ class Measure extends React.Component {
                                     variant="outlined"
                                     color={"primary"}
                                     defaultValue={""}
+                                    fullWidth={true}
                                     value={this.state.user_being_rated_name_and_id == null ? "" : this.state.user_being_rated_name_and_id}
                                 >
 
@@ -242,6 +249,7 @@ class Measure extends React.Component {
                                 <TextField id="standard-basic" label="Comments"
                                            value={this.state.user_being_rated_comment}
                                            onChange={(event => this._onCommentTextChange(event))}
+                                           fullWidth={true}
                                            color={"primary"}/>
 
                             </MUI_Grid>
@@ -387,50 +395,66 @@ class Measure extends React.Component {
                                                 {this.state.measure_name}
                                             </Typography>
                                         </Menu.Item>
-                                        <Modal trigger={<Menu.Item as='a' header position={"right"}>
-                                            <Segment.Inline> <Icon name='add'/> Leaderboard, babyy
+                                        <Menu.Item as='a'
+                                                   header position={"right"}
+                                                   onClick={() => this.setState({viewing_leaderboard: true})}>
+                                            <Segment.Inline> <Icon name='trophy'/> Leaderboard
                                             </Segment.Inline>
-                                        </Menu.Item>}>
-                                            <Modal.Header>Leaderboard</Modal.Header>
-                                            <Modal.Content>
-                                                <TableContainer>
-                                                    <Table stickyHeader aria-label="sticky table">
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                {this.columns.map(column => (
-                                                                    <TableCell
-                                                                        key={column.id}
-                                                                        align={column.align}
-                                                                        style={{minWidth: column.minWidth}}
-                                                                    >
-                                                                        {column.label}
-                                                                    </TableCell>
-                                                                ))}
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {this.state.lb_rows.map(row => {
-                                                                return (
-                                                                    <TableRow hover role="checkbox" tabIndex={-1}
-                                                                              key={row.code}>
-                                                                        {this.columns.map(column => {
-                                                                            const value = row[column.id];
-                                                                            return (
-                                                                                <TableCell key={column.id}
-                                                                                           align={column.align}>
-                                                                                    {value}
-                                                                                </TableCell>
-                                                                            );
-                                                                        })}
-                                                                    </TableRow>
-                                                                );
-                                                            })}
-                                                        </TableBody>
-                                                    </Table>
-                                                </TableContainer>
-                                            </Modal.Content>
-                                        </Modal>
+                                        </Menu.Item>
 
+                                        <Dialog open={this.state.viewing_leaderboard}
+                                                onClose={() => this.setState({viewing_leaderboard: false})}
+                                                aria-labelledby='leaderboard-title'
+                                                aria-describedby='leaderboard-description'
+                                        >
+                                            <DialogTitle id='leaderboard-title'>Leaderboard</DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText id='leaderboard-description'>
+                                                    See how the survivors in your bunker compare
+                                                    in {this.state.measure_name}
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <TableContainer>
+                                                <Table stickyHeader aria-label="sticky table">
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            {this.columns.map(column => (
+                                                                <TableCell
+                                                                    key={column.id}
+                                                                    align={column.align}
+                                                                    style={{minWidth: column.minWidth}}
+                                                                >
+                                                                    {column.label}
+                                                                </TableCell>
+                                                            ))}
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {this.state.lb_rows.map(row => {
+                                                            return (
+                                                                <TableRow hover role="checkbox" tabIndex={-1}
+                                                                          key={row.code}>
+                                                                    {this.columns.map(column => {
+                                                                        const value = row[column.id];
+                                                                        return (
+                                                                            <TableCell key={column.id}
+                                                                                       align={column.align}>
+                                                                                {value}
+                                                                            </TableCell>
+                                                                        );
+                                                                    })}
+                                                                </TableRow>
+                                                            );
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                            <DialogActions>
+                                                <Button onClick={() => this.setState({viewing_leaderboard: false})}>
+                                                    Done
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
                                     </Container>
                                 </Menu>
                             </Container>
