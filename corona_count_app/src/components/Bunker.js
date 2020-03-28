@@ -1,6 +1,6 @@
 import React from 'react'
 // eslint-disable-next-line
-import {Button, Container, Dropdown, Form, Grid as SUI_Grid, Header, List, Menu} from 'semantic-ui-react'
+import {Container, Dropdown, Form, Grid as SUI_Grid, Header, List, Menu} from 'semantic-ui-react'
 import LogoutButton from "./LogoutButton";
 import axios from 'axios';
 import config from '../url_config.json';
@@ -13,7 +13,17 @@ import Typography from "@material-ui/core/Typography";
 import MUI_Grid from '@material-ui/core/Grid';
 import Measure from './Measure';
 import Paper from "@material-ui/core/Paper";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@material-ui/core";
+import {
+    createMuiTheme,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    TextField
+} from "@material-ui/core";
+import {ThemeProvider} from "@material-ui/styles"
 
 class Bunker extends React.Component {
     state = {
@@ -31,16 +41,16 @@ class Bunker extends React.Component {
         users_for_bunker: null,
         past_users_for_bunker: null,
         adding_measure: false,
-        inviting_others: false
+        inviting_others: false,
+        theme: this.props.theme ? this.props.theme : this.props.location.state.theme
     };
 
     constructor(props) {
         super(props);
         // Set user upon return
-        let bunker_id
+        let bunker_id;
         try {
             bunker_id = this.props.location.state.bunker_id
-
         } catch (e) {   // Transition coming from a measure
             bunker_id = this.props.bunker_id
         }
@@ -207,23 +217,6 @@ class Bunker extends React.Component {
 
     // Render functions
 
-    addMeasureCard = () => {
-        return (
-            <div>
-                <Form.Input fluid icon='bug' iconPosition='left'
-                            placeholder='New measure name'
-                            onChange={(e, {value}) => this.__onCreateMeasureNameFormChange(value)}/>
-            </div>
-        )
-    }
-
-    addBunkerModalHeader = () => {
-        return (
-            <Header>Roommates making bad jokes, couching too much, or being a headass? Let them know with this measure
-                rating</Header>
-        )
-    }
-
     renderEmptyMeasureListItem = () => {
         return (
             <List.Item>
@@ -234,7 +227,7 @@ class Bunker extends React.Component {
                 </List.Content>
             </List.Item>
         );
-    }
+    };
 
     renderMeasureListItem = (measure) => {
         let lb = this.buildLeaderboard(measure.ratings, this.state.users_for_bunker)
@@ -263,11 +256,11 @@ class Bunker extends React.Component {
             </Paper>
 
         );
-    }
+    };
 
     genMeasureList = () => {
-        let data = []
-        if (this.state.measures.length == 0) {
+        let data = [];
+        if (this.state.measures.length === 0) {
             data.push(this.renderEmptyMeasureListItem())
         } else {
             this.state.measures.forEach(measure => data.push(this.renderMeasureListItem(measure)))
@@ -277,7 +270,7 @@ class Bunker extends React.Component {
 
 
     render() {
-        let measureDataForDisplay = this.genMeasureList()
+        let measureDataForDisplay = this.genMeasureList();
         if (this.state.go_back) {
             return (
                 < Redirect to={{pathname: "/home", state: {user: this.state.user_obj}}}/>
@@ -292,6 +285,7 @@ class Bunker extends React.Component {
                          users_for_bunker={this.state.users_for_bunker}
                          past_users_for_bunker={this.state.past_users_for_bunker}
                          buildLeaderboard={this.buildLeaderboard}
+                         theme={this.state.theme}
                 />
             )
         } else {
@@ -303,113 +297,123 @@ class Bunker extends React.Component {
                     minHeight: '100%',
                     minWidth: '100%'
                 }}>
-                    <SUI_Grid divided='vertically'>
-                        <SUI_Grid.Row columns={1}>
-                            <Container>
-                                <Menu fixed='top' color={'#581845'} inverted borderless>
-                                    <Container>
-                                        <Menu.Item position={"left"}>
-                                            <Dropdown item icon='arrow circle left' simple>
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item onClick={this.setGoBack}>
-                                                        Back to home
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item>
-                                                        <LogoutButton/>
-                                                    </Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </Menu.Item>
-                                        <Menu.Item header>
-                                            <Typography variant={'h5'}>
-                                                {this.state.bunker_name}
-                                            </Typography>
-
-                                        </Menu.Item>
-
-                                        <Menu.Item position={"right"}>
-                                            <Dropdown item icon='align justify' position={'right'} simple>
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item
-                                                        onClick={() => this.setState({adding_measure: true})}>
-                                                        <Icon name='add'/>Add Measure...
-                                                    </Dropdown.Item>}>
-                                                    <Dropdown.Item
-                                                        onClick={() => this.setState({inviting_others: true})}>
-                                                        <Icon name='add'/>Invite Others...
-                                                    </Dropdown.Item>
-
-                                                    <Dialog open={this.state.adding_measure}
-                                                            onClose={() => this.setState({adding_measure: false})}
-                                                            aria-labelledby="add-measure-title"
-                                                            aria-describedby="add-measure-description"
-                                                    >
-                                                        <DialogTitle id='add-measure-title'>{"Add a measure"}</DialogTitle>
-                                                        <DialogContent>
-                                                            <DialogContentText id='add-measure-description'>
-                                                                Create a new measure to start ranking the survivors in
-                                                                your bunker!
-                                                            </DialogContentText>
-                                                            <TextField
-                                                                autoFocus
-                                                                margin="dense"
-                                                                id="name"
-                                                                label="Measure name"
-                                                                type='text'
-                                                                fullWidth
-                                                                onChange={(event) => this.__onCreateMeasureNameFormChange(event.target.value)}
-                                                            />
-                                                        </DialogContent>
-                                                        <DialogActions>
-                                                            <Button onClick={this.__onAddMeasureClick}>
-                                                                Create
+                    <ThemeProvider
+                        theme={createMuiTheme(this.state.theme)}>
+                        <SUI_Grid divided='vertically'>
+                            <SUI_Grid.Row columns={1}>
+                                <Container>
+                                    <Menu fixed='top' inverted borderless>
+                                        <Container>
+                                            <Menu.Item position={"left"}>
+                                                <Dropdown item icon='arrow circle left' simple>
+                                                    <Dropdown.Menu style={{background: "#2f2f2f"}}>
+                                                        <Dropdown.Item>
+                                                            <Button onClick={this.setGoBack}>
+                                                                Back to home
                                                             </Button>
-                                                        </DialogActions>
-                                                    </Dialog>
-                                                    <Dialog open={this.state.inviting_others}
-                                                            onClose={() => this.setState({inviting_others: false})}
-                                                            aria-labelledby='inviting-others-title'
-                                                            aria-describedby='inviting-others-description'
-                                                    >
-                                                        <DialogTitle id='inviting-others-title'>Invite
-                                                            Others</DialogTitle>
-                                                        <DialogContent>
-                                                            <DialogContentText id='inviting-others-description'>
-                                                                Copy and send the access code below to your friends so
-                                                                they can join you in your bunker and help you survive!
-                                                            </DialogContentText>
-                                                            <Typography color={'primary'} variant={'h5'}
-                                                                        align={'center'}><b>{this.state.bunker._id}</b></Typography>
-                                                        </DialogContent>
-                                                        <DialogActions>
-                                                            <Button
-                                                                onClick={() => this.setState({inviting_others: false})}>
-                                                                Done
-                                                            </Button>
-                                                        </DialogActions>
-                                                    </Dialog>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </Menu.Item>
-                                    </Container>
-                                </Menu>
-                            </Container>
-                        </SUI_Grid.Row>
-                        <SUI_Grid.Row columns={1}>
-                            <MUI_Grid container spacing={5} style={{marginTop: '48px'}} direction={"row"}>
-                                <MUI_Grid item xs={12}>
-                                    <MUI_Grid container justify="center" spacing={4}>
-                                        {measureDataForDisplay.map(value => (
-                                            <MUI_Grid item>
-                                                {value}
-                                            </MUI_Grid>
-                                        ))}
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item>
+                                                            <LogoutButton/>
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </Menu.Item>
+                                            <Menu.Item header>
+                                                <Typography variant={'h4'}>
+                                                    {this.state.bunker_name}
+                                                </Typography>
+
+                                            </Menu.Item>
+
+                                            <Menu.Item position={"right"}>
+                                                <Dropdown item icon='align justify' position={'right'} simple>
+                                                    <Dropdown.Menu>
+                                                        <Dropdown.Item
+                                                            onClick={() => this.setState({adding_measure: true})}>
+                                                            <Icon name='add'/>Add Measure...
+                                                        </Dropdown.Item>}>
+                                                        <Dropdown.Item
+                                                            onClick={() => this.setState({inviting_others: true})}>
+                                                            <Icon name='add'/>Invite Others...
+                                                        </Dropdown.Item>
+
+                                                        <Dialog open={this.state.adding_measure}
+                                                                onClose={() => this.setState({adding_measure: false})}
+                                                                aria-labelledby="add-measure-title"
+                                                                aria-describedby="add-measure-description"
+                                                        >
+                                                            <DialogTitle
+                                                                id='add-measure-title'>{"Add a measure"}</DialogTitle>
+                                                            <DialogContent>
+                                                                <DialogContentText id='add-measure-description'>
+                                                                    Create a new measure to start ranking the survivors
+                                                                    in
+                                                                    your bunker!
+                                                                </DialogContentText>
+                                                                <TextField
+                                                                    autoFocus
+                                                                    margin="dense"
+                                                                    id="name"
+                                                                    label="Measure name"
+                                                                    type='text'
+                                                                    fullWidth
+                                                                    color={'secondary'}
+                                                                    onChange={(event) => this.__onCreateMeasureNameFormChange(event.target.value)}
+                                                                />
+                                                            </DialogContent>
+                                                            <DialogActions>
+                                                                <Button onClick={this.__onAddMeasureClick}>
+                                                                    Create
+                                                                </Button>
+                                                            </DialogActions>
+                                                        </Dialog>
+                                                        <Dialog open={this.state.inviting_others}
+                                                                onClose={() => this.setState({inviting_others: false})}
+                                                                aria-labelledby='inviting-others-title'
+                                                                aria-describedby='inviting-others-description'
+                                                        >
+                                                            <DialogTitle id='inviting-others-title'>Invite
+                                                                Others</DialogTitle>
+                                                            <DialogContent>
+                                                                <DialogContentText id='inviting-others-description'>
+                                                                    Copy and send the access code below to your friends
+                                                                    so
+                                                                    they can join you in your bunker and help you
+                                                                    survive!
+                                                                </DialogContentText>
+                                                                <Typography color={'secondary'} variant={'h5'}
+                                                                            align={'center'}><b>{this.state.bunker._id}</b></Typography>
+                                                            </DialogContent>
+                                                            <DialogActions>
+                                                                <Button
+                                                                    onClick={() => this.setState({inviting_others: false})}>
+                                                                    Done
+                                                                </Button>
+                                                            </DialogActions>
+                                                        </Dialog>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </Menu.Item>
+                                        </Container>
+                                    </Menu>
+                                </Container>
+                            </SUI_Grid.Row>
+                            <SUI_Grid.Row columns={1}>
+                                <MUI_Grid container spacing={5} style={{marginTop: '48px'}} direction={"row"}>
+                                    <MUI_Grid item xs={12}>
+                                        <MUI_Grid container justify="center" spacing={4}>
+                                            {measureDataForDisplay.map(value => (
+                                                <MUI_Grid item>
+                                                    {value}
+                                                </MUI_Grid>
+                                            ))}
+                                        </MUI_Grid>
                                     </MUI_Grid>
                                 </MUI_Grid>
-                            </MUI_Grid>
-                            {/*</Container>*/}
-                        </SUI_Grid.Row>
-                    </SUI_Grid>
+                                {/*</Container>*/}
+                            </SUI_Grid.Row>
+                        </SUI_Grid>
+                    </ThemeProvider>
                 </div>
             )
         }

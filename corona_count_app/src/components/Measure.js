@@ -1,6 +1,6 @@
 import React from "react";
 import Feed from "semantic-ui-react/dist/commonjs/views/Feed";
-import {Button, Container, Divider, Dropdown, Grid as SUI_Grid, Menu, Segment} from "semantic-ui-react";
+import {Container, Divider, Dropdown, Grid as SUI_Grid, Menu, Segment} from "semantic-ui-react";
 import LogoutButton from "./LogoutButton";
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import Card from "@material-ui/core/Card";
@@ -17,6 +17,8 @@ import config from "../url_config";
 import axios from "axios";
 import socketIOClient from "socket.io-client";
 import {
+    Button,
+    createMuiTheme,
     Dialog,
     DialogActions,
     DialogContent,
@@ -29,12 +31,8 @@ import {
     TableHead,
     TableRow
 } from "@material-ui/core";
+import {ThemeProvider} from '@material-ui/styles'
 
-
-function createData(name, code, population, size) {
-    const density = population / size;
-    return {name, code, population, size, density};
-}
 
 class Measure extends React.Component {
     state = {
@@ -54,7 +52,8 @@ class Measure extends React.Component {
         user_being_rated_delta: 0,
         snackbar_open: false,
         endpoint: "http://127.0.0.1:4000",
-        viewing_leaderboard: false
+        viewing_leaderboard: false,
+        theme: this.props.theme
     };
 
     columns = [
@@ -83,6 +82,7 @@ class Measure extends React.Component {
             user_being_rated_delta: 0,
             snackbar_open: false,
             endpoint: "http://127.0.0.1:4000",
+            theme: this.props.theme
         };
 
         this.getFeed(this.state.measure_id).then()
@@ -124,7 +124,7 @@ class Measure extends React.Component {
     };
 
     buildFeed = () => {
-        let feed = [this.postEventCard()]
+        let feed = [this.postEventCard()];
         this.state.raw_feed.forEach(raw_feed_item => {
             feed.push(this.feedEventCard(raw_feed_item))
         });
@@ -256,7 +256,7 @@ class Measure extends React.Component {
                             <MUI_Grid item xs={4}>
                                 <Container>
                                     <Typography id="discrete-slider-small-steps" gutterBottom>
-                                        <Typography style={{color: '#353535'}}>
+                                        <Typography variant={'body'} color={'textPrimary'}>
                                             Point delta: {this.state.user_being_rated_delta.toString()}
                                         </Typography>
                                     </Typography>
@@ -275,7 +275,7 @@ class Measure extends React.Component {
                                 </Container>
                             </MUI_Grid>
                             <MUI_Grid item xs={2}>
-                                <Button variant="contained" onClick={this.__onSubmitDeltaClick}>Submit</Button>
+                                <Button variant='contained' size={'large'} color={'primary'} onClick={this.__onSubmitDeltaClick}>Submit</Button>
                             </MUI_Grid>
                         </MUI_Grid>
                         <Divider/>
@@ -292,7 +292,7 @@ class Measure extends React.Component {
         let victim = all_users.filter(entry => entry.user_id === raw_feed_item.victim_id)[0].name;
         let delta = raw_feed_item.delta;
         let is_verified = raw_feed_item.is_verified || this.state.user_obj.nickname === accuser ? <div></div> :
-            <Button variant="contained" color={"primary"} onClick={() => this._onVerifyDelta(post_id)}>Verify</Button>;
+            <Button variant='contained' color={"primary"} onClick={() => this._onVerifyDelta(post_id)}>Verify</Button>;
         let comment = raw_feed_item.comment;
         let initials = null;
         try {
@@ -351,8 +351,10 @@ class Measure extends React.Component {
     render() {
         if (this.state.go_back) {
             return (
-                <Bunker bunker_id={this.state.bunker_id} user_obj={this.state.user_obj}
-                        users_for_bunker={this.state.users}/>
+                <Bunker bunker_id={this.state.bunker_id}
+                        user_obj={this.state.user_obj}
+                        users_for_bunker={this.state.users}
+                        theme={this.props.theme}/>
             )
         } else {
             return (
@@ -373,101 +375,105 @@ class Measure extends React.Component {
                         onClose={this.handleSnackbarClose}
                         message="Please add a name and comments to submit a delta"
                     />
-                    <SUI_Grid divided='vertically'>
-                        <SUI_Grid.Row columns={1}>
-                            <Container>
-                                <Menu fixed='top' color={'#581845'} inverted borderless>
-                                    <Container>
-                                        <Menu.Item position={"left"}>
-                                            <Dropdown item icon='arrow circle left' simple>
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item onClick={this.setGoBack}>
-                                                        Back to bunker
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item>
-                                                        <LogoutButton/>
-                                                    </Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </Menu.Item>
-                                        <Menu.Item header>
-                                            <Typography variant={'h5'}>
-                                                {this.state.measure_name}
-                                            </Typography>
-                                        </Menu.Item>
-                                        <Menu.Item as='a'
-                                                   header position={"right"}
-                                                   onClick={() => this.setState({viewing_leaderboard: true})}>
-                                            <Segment.Inline> <Icon name='trophy'/> Leaderboard
-                                            </Segment.Inline>
-                                        </Menu.Item>
+                    <ThemeProvider theme={createMuiTheme(this.state.theme)}>
+                        <SUI_Grid divided='vertically'>
+                            <SUI_Grid.Row columns={1}>
+                                <Container>
+                                    <Menu fixed='top' color={'#581845'} inverted borderless>
+                                        <Container>
+                                            <Menu.Item position={"left"}>
+                                                <Dropdown item icon='arrow circle left' simple>
+                                                    <Dropdown.Menu style={{background: "#2f2f2f"}}>
+                                                        <Dropdown.Item>
+                                                            <Button onClick={this.setGoBack}>
+                                                                Back to bunker
+                                                            </Button>
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item>
+                                                            <LogoutButton/>
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </Menu.Item>
+                                            <Menu.Item header>
+                                                <Typography variant={'h4'}>
+                                                    {this.state.measure_name}
+                                                </Typography>
+                                            </Menu.Item>
+                                            <Menu.Item as='a'
+                                                       header position={"right"}
+                                                       onClick={() => this.setState({viewing_leaderboard: true})}>
+                                                <Segment.Inline> <Icon name='trophy'/> Leaderboard
+                                                </Segment.Inline>
+                                            </Menu.Item>
 
-                                        <Dialog open={this.state.viewing_leaderboard}
-                                                onClose={() => this.setState({viewing_leaderboard: false})}
-                                                aria-labelledby='leaderboard-title'
-                                                aria-describedby='leaderboard-description'
-                                        >
-                                            <DialogTitle id='leaderboard-title'>Leaderboard</DialogTitle>
-                                            <DialogContent>
-                                                <DialogContentText id='leaderboard-description'>
-                                                    See how the survivors in your bunker compare
-                                                    in {this.state.measure_name}
-                                                </DialogContentText>
-                                            </DialogContent>
-                                            <TableContainer>
-                                                <Table stickyHeader aria-label="sticky table">
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            {this.columns.map(column => (
-                                                                <TableCell
-                                                                    key={column.id}
-                                                                    align={column.align}
-                                                                    style={{minWidth: column.minWidth}}
-                                                                >
-                                                                    {column.label}
-                                                                </TableCell>
-                                                            ))}
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        {this.state.lb_rows.map(row => {
-                                                            return (
-                                                                <TableRow hover role="checkbox" tabIndex={-1}
-                                                                          key={row.code}>
-                                                                    {this.columns.map(column => {
-                                                                        const value = row[column.id];
-                                                                        return (
-                                                                            <TableCell key={column.id}
-                                                                                       align={column.align}>
-                                                                                {value}
-                                                                            </TableCell>
-                                                                        );
-                                                                    })}
-                                                                </TableRow>
-                                                            );
-                                                        })}
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                            <DialogActions>
-                                                <Button onClick={() => this.setState({viewing_leaderboard: false})}>
-                                                    Done
-                                                </Button>
-                                            </DialogActions>
-                                        </Dialog>
-                                    </Container>
-                                </Menu>
-                            </Container>
-                        </SUI_Grid.Row>
-                        <SUI_Grid.Row columns={1}>
-                            <Container>
-                                <Feed style={{marginTop: '55px'}}>
-                                    {this.buildFeed().map(value => value)}
-                                </Feed>
-                            </Container>
+                                            <Dialog open={this.state.viewing_leaderboard}
+                                                    onClose={() => this.setState({viewing_leaderboard: false})}
+                                                    aria-labelledby='leaderboard-title'
+                                                    aria-describedby='leaderboard-description'
+                                            >
+                                                <DialogTitle id='leaderboard-title'>Leaderboard</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id='leaderboard-description'>
+                                                        See how the survivors in your bunker compare
+                                                        in {this.state.measure_name}
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <TableContainer>
+                                                    <Table stickyHeader aria-label="sticky table">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                {this.columns.map(column => (
+                                                                    <TableCell
+                                                                        key={column.id}
+                                                                        align={column.align}
+                                                                        style={{minWidth: column.minWidth}}
+                                                                    >
+                                                                        {column.label}
+                                                                    </TableCell>
+                                                                ))}
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {this.state.lb_rows.map(row => {
+                                                                return (
+                                                                    <TableRow hover role="checkbox" tabIndex={-1}
+                                                                              key={row.code}>
+                                                                        {this.columns.map(column => {
+                                                                            const value = row[column.id];
+                                                                            return (
+                                                                                <TableCell key={column.id}
+                                                                                           align={column.align}>
+                                                                                    {value}
+                                                                                </TableCell>
+                                                                            );
+                                                                        })}
+                                                                    </TableRow>
+                                                                );
+                                                            })}
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                                <DialogActions>
+                                                    <Button onClick={() => this.setState({viewing_leaderboard: false})}>
+                                                        Done
+                                                    </Button>
+                                                </DialogActions>
+                                            </Dialog>
+                                        </Container>
+                                    </Menu>
+                                </Container>
+                            </SUI_Grid.Row>
+                            <SUI_Grid.Row columns={1}>
+                                <Container>
+                                    <Feed style={{marginTop: '55px'}}>
+                                        {this.buildFeed().map(value => value)}
+                                    </Feed>
+                                </Container>
 
-                        </SUI_Grid.Row>
-                    </SUI_Grid>
+                            </SUI_Grid.Row>
+                        </SUI_Grid>
+                    </ThemeProvider>
                 </div>
             )
         }

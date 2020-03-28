@@ -1,5 +1,5 @@
 import {useAuth0} from "../react-auth0-spa";
-import {Button} from "semantic-ui-react";
+import {Button} from "@material-ui/core";
 import React from "react";
 
 const LogoutButton = () => {
