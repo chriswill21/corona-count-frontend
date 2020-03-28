@@ -38,7 +38,8 @@ class Home extends React.Component {
         past_users_for_target_bunker: [],
         bunker_to_leave: null,
         adding_bunker: false,
-        theme: this.props.theme
+        theme: this.props.theme,
+        help: false
     };
 
     constructor(props) {
@@ -346,6 +347,14 @@ class Home extends React.Component {
                                                 <Dropdown item icon='align justify' simple>
                                                     <Dropdown.Menu style={{background: '#5c5c5c'}}>
                                                         <Dropdown.Item>
+                                                            <div>
+                                                                <Typography onClick={() => this.setState({help: true})}
+                                                                            variant={'button'}
+                                                                            color={'textPrimary'}
+                                                                ><Icon name={'question'}/> Help</Typography>
+                                                            </div>
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item>
                                                             <LogoutButton/>
                                                         </Dropdown.Item>
                                                     </Dropdown.Menu>
@@ -406,6 +415,47 @@ class Home extends React.Component {
                                                     </Button>
                                                     <Button onClick={this.__onAddBunkerClick}>
                                                         Add
+                                                    </Button>
+                                                </DialogActions>
+                                            </Dialog>
+                                            <Dialog open={this.state.help}
+                                                    onClose={() => this.setState({help: false})}
+                                                    aria-labelledby='help-title'
+                                                    aria-describedby='help-description'
+                                                    fullWidth
+                                            >
+                                                <DialogTitle id='help-title'>Welcome to Corona Count</DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText id='help-description'>
+                                                        <Typography>
+                                                            <b>Coronavirus... it's getting real!</b>
+                                                        </Typography>
+                                                        <br/>
+                                                        Corona count is a a way for you and your fellow quarantinees to
+                                                        stay sane (or not) and have some fun during this global
+                                                        pandemic. The game is simple. First create a bunker. Like the
+                                                        ones you're probably camping out in right now, a bunker is a
+                                                        virtual dugout for you, your friends, and your family. Once you
+                                                        create and enter a bunker, click on the button on the top right
+                                                        to add your friends. Just share the access code with your crew
+                                                        and they can join you in "shelter."
+                                                        <br/>
+                                                        <br/>
+                                                        Is your Dad making too many bad jokes, friend coughing too
+                                                        loudly, or sister watching too much TikTok? This is where the
+                                                        measures come in. Create a measure such as "Humor," "Hygiene,"
+                                                        to be able to dock your points or award them based on how they
+                                                        do with the criteria. Next, add some measures. Each measure has
+                                                        its own leaderboard so your whole bunker will know who's #1, and
+                                                        who needs to get their stuff together.
+                                                        <br/>
+                                                        <br/>
+                                                        Stay safe and social distance!
+                                                    </DialogContentText>
+                                                </DialogContent>
+                                                <DialogActions>
+                                                    <Button onClick={() => this.setState({help: false})}>
+                                                        Cancel
                                                     </Button>
                                                 </DialogActions>
                                             </Dialog>
