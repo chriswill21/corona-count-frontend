@@ -371,6 +371,9 @@ class Home extends React.Component {
                                                 {this.addBunkerCard()}
                                             </this.TabPanel>
                                             <DialogActions>
+                                                <Button onClick={() => this.setState({adding_bunker: false})}>
+                                                    Cancel
+                                                </Button>
                                                 <Button onClick={this.__onAddBunkerClick}>
                                                     Add
                                                 </Button>
