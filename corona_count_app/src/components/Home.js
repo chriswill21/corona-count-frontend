@@ -268,13 +268,25 @@ class Home extends React.Component {
             <List.Item>
                 <List.Icon name='certificate' size='large' verticalAlign='middle'/>
                 <List.Content>
-                    <List.Header as='a' onClick={() => {
-                        this.setRedirect(bunker)
-                    }}>{bunker.name}</List.Header>
-                    <List.Description as='a' onClick={() => {
-                        this.handleLeaveBunkerClickOpen(bunker._id)
-                    }}>Leave
-                        Bunker</List.Description>
+                    <List.Header>
+                        <Typography component='a'
+                                    onClick={() => {
+                                        this.setRedirect(bunker)
+                                    }}
+                        >
+                            {bunker.name}
+                        </Typography>
+                    </List.Header>
+                    <List.Description>
+                        <Typography component='a'
+                                    variant={'caption'}
+                                    onClick={() => {
+                                        this.handleLeaveBunkerClickOpen(bunker._id)
+                                    }}
+                        >
+                            Leave Bunker
+                        </Typography>
+                    </List.Description>
                 </List.Content>
             </List.Item>
         );
@@ -332,7 +344,7 @@ class Home extends React.Component {
                                         <Container>
                                             <Menu.Item position={"left"}>
                                                 <Dropdown item icon='align justify' simple>
-                                                    <Dropdown.Menu style={{background: '#2f2f2f'}}>
+                                                    <Dropdown.Menu style={{background: '#5c5c5c'}}>
                                                         <Dropdown.Item>
                                                             <LogoutButton/>
                                                         </Dropdown.Item>

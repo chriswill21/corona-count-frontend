@@ -306,11 +306,14 @@ class Bunker extends React.Component {
                                         <Container>
                                             <Menu.Item position={"left"}>
                                                 <Dropdown item icon='arrow circle left' simple>
-                                                    <Dropdown.Menu style={{background: "#2f2f2f"}}>
+                                                    <Dropdown.Menu style={{background: "#5c5c5c"}}>
                                                         <Dropdown.Item>
-                                                            <Button onClick={this.setGoBack}>
+                                                            <Typography onClick={this.setGoBack}
+                                                                        variant={'button'}
+                                                                        color={'textPrimary'}
+                                                            >
                                                                 Back to home
-                                                            </Button>
+                                                            </Typography>
                                                         </Dropdown.Item>
                                                         <Dropdown.Item>
                                                             <LogoutButton/>
@@ -327,14 +330,22 @@ class Bunker extends React.Component {
 
                                             <Menu.Item position={"right"}>
                                                 <Dropdown item icon='align justify' position={'right'} simple>
-                                                    <Dropdown.Menu>
-                                                        <Dropdown.Item
-                                                            onClick={() => this.setState({adding_measure: true})}>
+                                                    <Dropdown.Menu style={{background: "#5c5c5c"}}>
+                                                        <Dropdown.Item>
+                                                            <Typography onClick={() => this.setState({adding_measure: true})}
+                                                                        variant={'button'}
+                                                                        color={'textPrimary'}
+                                                            >
                                                             <Icon name='add'/>Add Measure...
-                                                        </Dropdown.Item>}>
-                                                        <Dropdown.Item
-                                                            onClick={() => this.setState({inviting_others: true})}>
+                                                            </Typography>
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item>
+                                                            <Typography onClick={() => this.setState({inviting_others: true})}
+                                                                        variant={'button'}
+                                                                        color={'textPrimary'}
+                                                            >
                                                             <Icon name='add'/>Invite Others...
+                                                            </Typography>
                                                         </Dropdown.Item>
 
                                                         <Dialog open={this.state.adding_measure}

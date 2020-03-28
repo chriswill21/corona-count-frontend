@@ -383,11 +383,14 @@ class Measure extends React.Component {
                                         <Container>
                                             <Menu.Item position={"left"}>
                                                 <Dropdown item icon='arrow circle left' simple>
-                                                    <Dropdown.Menu style={{background: "#2f2f2f"}}>
+                                                    <Dropdown.Menu style={{background: "#5c5c5c"}}>
                                                         <Dropdown.Item>
-                                                            <Button onClick={this.setGoBack}>
+                                                            <Typography onClick={this.setGoBack}
+                                                                        variant={'button'}
+                                                                        color={'textPrimary'}
+                                                            >
                                                                 Back to bunker
-                                                            </Button>
+                                                            </Typography>
                                                         </Dropdown.Item>
                                                         <Dropdown.Item>
                                                             <LogoutButton/>
