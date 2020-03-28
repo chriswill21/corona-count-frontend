@@ -144,9 +144,9 @@ class Bunker extends React.Component {
     }
 
     async getMeasure(measure_id) {
-        let url = config.measures_url + "/" + measure_id
-        url = encodeURI(url)
-        console.log('Get measure url: ', url)
+        let url = config.measures_url + "/" + measure_id;
+        url = encodeURI(url);
+        console.log('Get measure url: ', url);
 
         try {
             const response =
@@ -208,12 +208,11 @@ class Bunker extends React.Component {
 
     __onCreateMeasureNameFormChange = (value) => {
         this.setState({create_measure_form_text: value})
-    }
+    };
 
     __onAddMeasureClick = () => {
         this.createNewMeasure(this.state.create_measure_form_text, this.state.create_measure_default_score).then(r => console.log("Measure created"))
-
-    }
+    };
 
     // Render functions
 
@@ -332,19 +331,21 @@ class Bunker extends React.Component {
                                                 <Dropdown item icon='align justify' position={'right'} simple>
                                                     <Dropdown.Menu style={{background: "#5c5c5c"}}>
                                                         <Dropdown.Item>
-                                                            <Typography onClick={() => this.setState({adding_measure: true})}
-                                                                        variant={'button'}
-                                                                        color={'textPrimary'}
+                                                            <Typography
+                                                                onClick={() => this.setState({adding_measure: true})}
+                                                                variant={'button'}
+                                                                color={'textPrimary'}
                                                             >
-                                                            <Icon name='add'/>Add Measure...
+                                                                <Icon name='add'/>Add Measure...
                                                             </Typography>
                                                         </Dropdown.Item>
                                                         <Dropdown.Item>
-                                                            <Typography onClick={() => this.setState({inviting_others: true})}
-                                                                        variant={'button'}
-                                                                        color={'textPrimary'}
+                                                            <Typography
+                                                                onClick={() => this.setState({inviting_others: true})}
+                                                                variant={'button'}
+                                                                color={'textPrimary'}
                                                             >
-                                                            <Icon name='add'/>Invite Others...
+                                                                <Icon name='add'/>Invite Others...
                                                             </Typography>
                                                         </Dropdown.Item>
 
@@ -358,8 +359,7 @@ class Bunker extends React.Component {
                                                             <DialogContent>
                                                                 <DialogContentText id='add-measure-description'>
                                                                     Create a new measure to start ranking the survivors
-                                                                    in
-                                                                    your bunker!
+                                                                    in your bunker!
                                                                 </DialogContentText>
                                                                 <TextField
                                                                     autoFocus

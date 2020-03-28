@@ -39,7 +39,10 @@ class Home extends React.Component {
         bunker_to_leave: null,
         adding_bunker: false,
         theme: this.props.theme,
-        help: false
+        help: false,
+        updating_username: false,
+        update_username_text: "",
+        update_username_error: false
     };
 
     constructor(props) {
@@ -73,11 +76,13 @@ class Home extends React.Component {
         }
     }
 
-    handleItemClick = (e, {name}) => this.setState({
-        add_bunker_tab: name,
-        create_bunker_form_text: "",
-        join_bunker_form_text: ""
-    });
+    handleItemClick = (event, newValue) => {
+        this.setState({
+            add_bunker_tab: newValue,
+            create_bunker_form_text: "",
+            join_bunker_form_text: ""
+        })
+    };
 
     handleLeaveBunkerClickOpen = (bunker) => {
         this.setState({bunker_to_leave: bunker})
@@ -180,10 +185,25 @@ class Home extends React.Component {
             const response =
                 await axios.delete(url);
             console.log("Successfully left Bunker: ", response.success);
-            this.setState({bunker_to_leave: null})
+            this.setState({bunker_to_leave: null});
             this.getUserData(this.props.user).then(r => console.log("User data retrieved"))
         } catch (e) {
             console.log("Error leaving bunker: ", e.response)
+        }
+    }
+
+    async updateUsername(username) {
+        let url = config.users_url + "/" + this.state.user_id + "/" + this.state.update_username_text
+        url = encodeURI(url);
+        console.log('Update username url:', url);
+
+        try {
+            const response =
+                await axios.post(url);
+            console.log("Successfully updated username: ", response.success);
+            this.setState({update_username_text: ""});
+        } catch (e) {
+            console.log("Error updating username: ", e.response)
         }
     }
 
@@ -205,6 +225,24 @@ class Home extends React.Component {
             if (this.state.create_bunker_form_text) {
                 this.createNewBunker(this.state.create_bunker_form_text).then(r => console.log("Attempt created new bunker", r))
             }
+        }
+    };
+
+    __onUpdateUsernameFormChange = (value) => {
+        this.setState({update_username_text: value});
+    };
+
+    __onUpdateUsernameClick = () => {
+        if (this.state.update_username_text) {
+            this.updateUsername(this.state.update_username_text).then(r => {
+                console.log("User name updated")
+                this.setState({
+                    update_username_error: false,
+                    updating_username: false
+                });
+            });
+        } else {
+            this.setState({update_username_error: true});
         }
     };
 
@@ -248,6 +286,18 @@ class Home extends React.Component {
                 <Typography color={"secondary"}><b>Bunker join error! Either your access code is incorrect, or you've
                     already been
                     added to this bunker.</b></Typography>
+            )
+        }
+    };
+
+    addUsernameDialogHeader = () => {
+        if (!this.state.update_username_error) {
+            return (
+                <Typography><b>What is your name?</b></Typography>
+            )
+        } else {
+            return (
+                <Typography color={"secondary"}><b>Please provide a valid username!</b></Typography>
             )
         }
     };
@@ -347,6 +397,15 @@ class Home extends React.Component {
                                                 <Dropdown item icon='align justify' simple>
                                                     <Dropdown.Menu style={{background: '#5c5c5c'}}>
                                                         <Dropdown.Item>
+                                                            <Typography
+                                                                onClick={() => this.setState({updating_username: true})}
+                                                                variant={'button'}
+                                                                color={'textPrimary'}
+                                                            >
+                                                                <Icon name={'pencil alternate'}/>Update name...
+                                                            </Typography>
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item>
                                                             <div>
                                                                 <Typography onClick={() => this.setState({help: true})}
                                                                             variant={'button'}
@@ -354,6 +413,40 @@ class Home extends React.Component {
                                                                 ><Icon name={'question'}/> Help</Typography>
                                                             </div>
                                                         </Dropdown.Item>
+                                                        <Dialog open={this.state.updating_username}
+                                                                onClose={() => this.setState({updating_username: false})}
+                                                                aria-labelledby={"update-username-title"}
+                                                                aria-describedby={'update-username-description'}
+                                                        >
+                                                            <DialogTitle
+                                                                id={'update-username-title'}>Update your name</DialogTitle>
+                                                            <DialogContent>
+                                                                <DialogContentText id={'update-username-description'}>
+                                                                    {this.addUsernameDialogHeader()}
+                                                                    Update the name that other survivors in your bunkers
+                                                                    will see for you.
+                                                                </DialogContentText>
+                                                                <TextField
+                                                                    autoFocus
+                                                                    margin={'dense'}
+                                                                    id={'new-username'}
+                                                                    label={'New User Name'}
+                                                                    type={'text'}
+                                                                    fullWidth
+                                                                    color={'secondary'}
+                                                                    onChange={(event) => this.__onUpdateUsernameFormChange(event.target.value)}
+                                                                />
+                                                            </DialogContent>
+                                                            <DialogActions>
+                                                                <Button
+                                                                    onClick={() => this.setState({updating_username: false})}>
+                                                                    Cancel
+                                                                </Button>
+                                                                <Button onClick={this.__onUpdateUsernameClick}>
+                                                                    Update
+                                                                </Button>
+                                                            </DialogActions>
+                                                        </Dialog>
                                                         <Dropdown.Item>
                                                             <LogoutButton/>
                                                         </Dropdown.Item>
@@ -386,13 +479,7 @@ class Home extends React.Component {
                                                 </DialogContent>
                                                 <AppBar position='static'>
                                                     <Tabs value={this.state.add_bunker_tab}
-                                                          onChange={(event, newValue) => {
-                                                              this.setState({
-                                                                  add_bunker_tab: newValue,
-                                                                  create_bunker_form_text: "",
-                                                                  join_bunker_form_text: ""
-                                                              })
-                                                          }}
+                                                          onChange={this.handleItemClick}
                                                           aria-label="add-bunker-tabs"
                                                     >
                                                         <Tab label={"Join"}
@@ -455,7 +542,7 @@ class Home extends React.Component {
                                                 </DialogContent>
                                                 <DialogActions>
                                                     <Button onClick={() => this.setState({help: false})}>
-                                                        Cancel
+                                                        Close
                                                     </Button>
                                                 </DialogActions>
                                             </Dialog>
