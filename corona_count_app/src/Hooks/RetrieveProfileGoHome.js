@@ -1,7 +1,6 @@
 import {useAuth0} from "../react-auth0-spa";
 import React from "react";
 import Home from "../components/Home";
-import {createMuiTheme} from "@material-ui/core";
 
 const RetrieveProfileGoHome = () => {
     const {loading, user} = useAuth0();

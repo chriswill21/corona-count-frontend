@@ -39,45 +39,46 @@ class Home extends React.Component {
         bunker_to_leave: null,
         adding_bunker: false,
         theme: this.props.theme,
-        help: false
+        help: false,
+        updating_username: false,
+        update_username_text: "",
+        update_username_error: false
     };
 
     constructor(props) {
         super(props);
         let user = this.props.user;
         console.log("user", user);
-        this.getUserData(user).then(r => console.log("User data retrieved"))
+        this.getUserData(user).then(r => console.log("User data retrieved:", r))
     }
 
     async setRedirect(bunker) {
         console.log("clicked on a bunker", bunker);
-        // this.setState({
-        //     redirect_bunker_id: bunker._id
-        // })
-        let url = config.bunkers_url + "/users/" + bunker._id
-        url = encodeURI(url)
+        let url = config.bunkers_url + "/users/" + bunker._id;
+        url = encodeURI(url);
         console.log('Get users from bunker url: ', url);
         try {
-            const response =
-                await axios.get(url).then(r => {
-                    console.log("Retrieved users from bunker: ", r.data.users)
-                    this.setState({
-                        users_for_target_bunker: r.data.users,
-                        past_users_for_target_bunker: r.data.past_users,
-                        redirect_bunker_id: bunker._id
-                    })
+            await axios.get(url).then(r => {
+                console.log("Retrieved users from bunker: ", r.data.users);
+                this.setState({
+                    users_for_target_bunker: r.data.users,
+                    past_users_for_target_bunker: r.data.past_users,
+                    redirect_bunker_id: bunker._id
                 })
+            })
         } catch (e) {
-            console.log("Failed getting users from bunker", e)
+            console.log("Failed getting users from bunker", e);
             return null
         }
     }
 
-    handleItemClick = (e, {name}) => this.setState({
-        add_bunker_tab: name,
-        create_bunker_form_text: "",
-        join_bunker_form_text: ""
-    });
+    handleItemClick = (event, newValue) => {
+        this.setState({
+            add_bunker_tab: newValue,
+            create_bunker_form_text: "",
+            join_bunker_form_text: ""
+        })
+    };
 
     handleLeaveBunkerClickOpen = (bunker) => {
         this.setState({bunker_to_leave: bunker})
@@ -107,16 +108,16 @@ class Home extends React.Component {
 
     async getUserData(user) {
         // Get user data from backend
-        let id = user.sub.slice(6)
+        let id = user.sub.slice(6);
 
-        let url = config.users_url + "/" + id
-        url = encodeURI(url)
+        let url = config.users_url + "/" + id;
+        url = encodeURI(url);
         console.log("Get user data url", url);
         try {
             const response =
-                await axios.get(url)
+                await axios.get(url);
 
-            let loadedBunkers = response.data.bunkers
+            let loadedBunkers = response.data.bunkers;
             this.setState({bunkers: loadedBunkers})
         } catch (e) {
             // If no data --> postNewUser --> bunker is empty
@@ -144,10 +145,10 @@ class Home extends React.Component {
 
     async createNewBunker(name) {
         //TODO: Duplicate bunker names shouldn't exit
-        let url = config.bunkers_url
-        url = encodeURI(url)
-        console.log('Post new bunker url: ', url)
-        const response = await axios.post(
+        let url = config.bunkers_url;
+        url = encodeURI(url);
+        console.log('Post new bunker url: ', url);
+        await axios.post(
             url,
             {name: name.toString(), users: [this.state.user_id], measures: []},
             {headers: {'Content-Type': 'application/json'}}
@@ -180,10 +181,25 @@ class Home extends React.Component {
             const response =
                 await axios.delete(url);
             console.log("Successfully left Bunker: ", response.success);
-            this.setState({bunker_to_leave: null})
-            this.getUserData(this.props.user).then(r => console.log("User data retrieved"))
+            this.setState({bunker_to_leave: null});
+            this.getUserData(this.props.user).then(r => console.log("User data retrieved:", r))
         } catch (e) {
             console.log("Error leaving bunker: ", e.response)
+        }
+    }
+
+    async updateUsername() {
+        let url = config.users_url + "/" + this.state.user_id + "/" + this.state.update_username_text;
+        url = encodeURI(url);
+        console.log('Update username url:', url);
+
+        try {
+            const response =
+                await axios.post(url);
+            console.log("Successfully updated username: ", response.success);
+            this.setState({update_username_text: ""});
+        } catch (e) {
+            console.log("Error updating username: ", e.response)
         }
     }
 
@@ -205,6 +221,24 @@ class Home extends React.Component {
             if (this.state.create_bunker_form_text) {
                 this.createNewBunker(this.state.create_bunker_form_text).then(r => console.log("Attempt created new bunker", r))
             }
+        }
+    };
+
+    __onUpdateUsernameFormChange = (value) => {
+        this.setState({update_username_text: value});
+    };
+
+    __onUpdateUsernameClick = () => {
+        if (this.state.update_username_text) {
+            this.updateUsername().then(r => {
+                console.log("User name updated:", r);
+                this.setState({
+                    update_username_error: false,
+                    updating_username: false
+                });
+            });
+        } else {
+            this.setState({update_username_error: true});
         }
     };
 
@@ -252,6 +286,18 @@ class Home extends React.Component {
         }
     };
 
+    addUsernameDialogHeader = () => {
+        if (!this.state.update_username_error) {
+            return (
+                <Typography><b>What is your name?</b></Typography>
+            )
+        } else {
+            return (
+                <Typography color={"secondary"}><b>Please provide a valid username!</b></Typography>
+            )
+        }
+    };
+
     renderEmptyBunkerListItem = () => {
         return (
             <List.Item>
@@ -272,7 +318,7 @@ class Home extends React.Component {
                     <List.Header>
                         <Typography component='a'
                                     onClick={() => {
-                                        this.setRedirect(bunker)
+                                        this.setRedirect(bunker).then()
                                     }}
                         >
                             {bunker.name}
@@ -347,6 +393,15 @@ class Home extends React.Component {
                                                 <Dropdown item icon='align justify' simple>
                                                     <Dropdown.Menu style={{background: '#5c5c5c'}}>
                                                         <Dropdown.Item>
+                                                            <Typography
+                                                                onClick={() => this.setState({updating_username: true})}
+                                                                variant={'button'}
+                                                                color={'textPrimary'}
+                                                            >
+                                                                <Icon name={'pencil alternate'}/>Update name...
+                                                            </Typography>
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item>
                                                             <div>
                                                                 <Typography onClick={() => this.setState({help: true})}
                                                                             variant={'button'}
@@ -354,6 +409,41 @@ class Home extends React.Component {
                                                                 ><Icon name={'question'}/> Help</Typography>
                                                             </div>
                                                         </Dropdown.Item>
+                                                        <Dialog open={this.state.updating_username}
+                                                                onClose={() => this.setState({updating_username: false})}
+                                                                aria-labelledby={"update-username-title"}
+                                                                aria-describedby={'update-username-description'}
+                                                        >
+                                                            <DialogTitle
+                                                                id={'update-username-title'}>Update your
+                                                                name</DialogTitle>
+                                                            <DialogContent>
+                                                                <DialogContentText id={'update-username-description'}>
+                                                                    {this.addUsernameDialogHeader()}
+                                                                    Update the name that other survivors in your bunkers
+                                                                    will see for you.
+                                                                </DialogContentText>
+                                                                <TextField
+                                                                    autoFocus
+                                                                    margin={'dense'}
+                                                                    id={'new-username'}
+                                                                    label={'New User Name'}
+                                                                    type={'text'}
+                                                                    fullWidth
+                                                                    color={'secondary'}
+                                                                    onChange={(event) => this.__onUpdateUsernameFormChange(event.target.value)}
+                                                                />
+                                                            </DialogContent>
+                                                            <DialogActions>
+                                                                <Button
+                                                                    onClick={() => this.setState({updating_username: false})}>
+                                                                    Cancel
+                                                                </Button>
+                                                                <Button onClick={this.__onUpdateUsernameClick}>
+                                                                    Update
+                                                                </Button>
+                                                            </DialogActions>
+                                                        </Dialog>
                                                         <Dropdown.Item>
                                                             <LogoutButton/>
                                                         </Dropdown.Item>
@@ -386,13 +476,7 @@ class Home extends React.Component {
                                                 </DialogContent>
                                                 <AppBar position='static'>
                                                     <Tabs value={this.state.add_bunker_tab}
-                                                          onChange={(event, newValue) => {
-                                                              this.setState({
-                                                                  add_bunker_tab: newValue,
-                                                                  create_bunker_form_text: "",
-                                                                  join_bunker_form_text: ""
-                                                              })
-                                                          }}
+                                                          onChange={this.handleItemClick}
                                                           aria-label="add-bunker-tabs"
                                                     >
                                                         <Tab label={"Join"}
@@ -455,7 +539,7 @@ class Home extends React.Component {
                                                 </DialogContent>
                                                 <DialogActions>
                                                     <Button onClick={() => this.setState({help: false})}>
-                                                        Cancel
+                                                        Close
                                                     </Button>
                                                 </DialogActions>
                                             </Dialog>

@@ -161,9 +161,9 @@ class Measure extends React.Component {
     // Back end async functions
 
     async postDelta() {
-        let url = config.measures_url + "/feed/" + this.state.measure_id
-        url = encodeURI(url)
-        console.log('Post delta url: ', url)
+        let url = config.measures_url + "/feed/" + this.state.measure_id;
+        url = encodeURI(url);
+        console.log('Post delta url: ', url);
         try {
             const response = await axios.post(
                 url,
