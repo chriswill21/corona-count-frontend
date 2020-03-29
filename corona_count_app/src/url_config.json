@@ -1,5 +1,5 @@
 {
-  "users_url": "http://127.0.0.1:8082/api/users",
-  "bunkers_url": "http://127.0.0.1:8082/api/bunkers",
-  "measures_url": "http://127.0.0.1:8082/api/measures"
+  "users_url": "https://corona-count-19.herokuapp.com/api/users",
+  "bunkers_url": "https://corona-count-19.herokuapp.com/api/bunkers",
+  "measures_url": "https://corona-count-19.herokuapp.com/api/measures"
 }

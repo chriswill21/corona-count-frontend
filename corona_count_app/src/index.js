@@ -23,7 +23,7 @@ ReactDOM.render(
   <Auth0Provider
     domain={config.domain}
     client_id={config.clientId}
-    redirect_uri="http://localhost:3000/home"//{window.location.origin}
+    redirect_uri="https://corona-count-frontend.now.sh/home"//{window.location.origin}
     onRedirectCallback={onRedirectCallback}
   >
     <App />
