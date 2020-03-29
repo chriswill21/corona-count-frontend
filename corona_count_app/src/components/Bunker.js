@@ -1,6 +1,6 @@
 import React from 'react'
 // eslint-disable-next-line
-import {Container, Dropdown, Form, Grid as SUI_Grid, Header, List, Menu} from 'semantic-ui-react'
+import {Container, Dropdown, Grid as SUI_Grid, List, Menu} from 'semantic-ui-react'
 import LogoutButton from "./LogoutButton";
 import axios from 'axios';
 import config from '../url_config.json';
@@ -14,8 +14,8 @@ import MUI_Grid from '@material-ui/core/Grid';
 import Measure from './Measure';
 import Paper from "@material-ui/core/Paper";
 import {
-    createMuiTheme,
     Button,
+    createMuiTheme,
     Dialog,
     DialogActions,
     DialogContent,
@@ -91,12 +91,11 @@ class Bunker extends React.Component {
     // Back end call functions
 
     async createNewMeasure(name, default_score) {
-        //TODO: Duplicate measure names shouldn't exit
-        let url = config.bunkers_url + "/measure/" + this.state.bunker._id + "/" + name + "/" + default_score
-        url = encodeURI(url)
+        let url = config.bunkers_url + "/measure/" + this.state.bunker._id + "/" + name + "/" + default_score;
+        url = encodeURI(url);
         console.log('Post new measure url: ', url);
         try {
-            const response = await axios.post(
+            await axios.post(
                 url,
                 {},
                 {headers: {'Content-Type': 'application/json'}}
@@ -107,37 +106,35 @@ class Bunker extends React.Component {
     }
 
     async getBunker(bunker_id) {
-        let url = config.bunkers_url + "/" + bunker_id
-        url = encodeURI(url)
-        console.log('Get bunker url: ', url)
+        let url = config.bunkers_url + "/" + bunker_id;
+        url = encodeURI(url);
+        console.log('Get bunker url: ', url);
 
         try {
-            const response =
-                await axios.get(url).then(r => {
-                    this.setState({bunker: r.data.bunker})
-                    this.getMeasuresFromBunker(r.data.bunker._id)
-                    console.log("Retrieved bunker data: ", r.data.bunker)
-                })
+            await axios.get(url).then(r => {
+                this.setState({bunker: r.data.bunker});
+                this.getMeasuresFromBunker(r.data.bunker._id);
+                console.log("Retrieved bunker data: ", r.data.bunker)
+            })
         } catch (e) {
-            console.log("Bunker doesn't exist", e)
+            console.log("Bunker doesn't exist", e);
             return null
         }
     }
 
     async getMeasuresFromBunker(bunker_id) {
-        let url = config.bunkers_url + "/measures/" + bunker_id
-        url = encodeURI(url)
-        console.log('Get measures from bunker url: ', url)
+        let url = config.bunkers_url + "/measures/" + bunker_id;
+        url = encodeURI(url);
+        console.log('Get measures from bunker url: ', url);
         try {
-            const response =
-                await axios.get(url).then(r => {
-                        this.setState({measures: r.data.measures})
-                        this.getUsersFromBunker(bunker_id)
-                    }
-                )
+            await axios.get(url).then(r => {
+                    this.setState({measures: r.data.measures});
+                    this.getUsersFromBunker(bunker_id)
+                }
+            );
             console.log("Retrieved bunker's measures")
         } catch (e) {
-            console.log("Couldn't get bunker's measures", e)
+            console.log("Couldn't get bunker's measures", e);
             return null
         }
 
@@ -149,30 +146,28 @@ class Bunker extends React.Component {
         console.log('Get measure url: ', url);
 
         try {
-            const response =
-                await axios.get(url).then(r => {
-                    console.log("Retrieved measure data: ", r.data.measure)
-                    this.setGoToMeasure(r.data.measure)
-                })
+            await axios.get(url).then(r => {
+                console.log("Retrieved measure data: ", r.data.measure);
+                this.setGoToMeasure(r.data.measure)
+            })
         } catch (e) {
-            console.log("Measure doesn't exist", e)
+            console.log("Measure doesn't exist", e);
             return null
         }
     }
 
     async getUsersFromBunker(bunker_id) {
-        let url = config.bunkers_url + "/users/" + bunker_id
-        url = encodeURI(url)
-        console.log('Get users from bunker url: ', url)
+        let url = config.bunkers_url + "/users/" + bunker_id;
+        url = encodeURI(url);
+        console.log('Get users from bunker url: ', url);
         try {
-            const response =
-                await axios.get(url).then(r => {
-                    console.log("Retrieved users from bunker: ", r.data.users);
-                    this.setState({
-                        users_for_bunker: r.data.users,
-                        past_users_for_bunker: r.data.past_users
-                    });
-                })
+            await axios.get(url).then(r => {
+                console.log("Retrieved users from bunker: ", r.data.users);
+                this.setState({
+                    users_for_bunker: r.data.users,
+                    past_users_for_bunker: r.data.past_users
+                });
+            })
         } catch (e) {
             console.log("Failed getting users from bunker", e);
             return null
@@ -211,7 +206,7 @@ class Bunker extends React.Component {
     };
 
     __onAddMeasureClick = () => {
-        this.createNewMeasure(this.state.create_measure_form_text, this.state.create_measure_default_score).then(r => console.log("Measure created"))
+        this.createNewMeasure(this.state.create_measure_form_text, this.state.create_measure_default_score).then(r => console.log("Measure created:", r))
     };
 
     // Render functions
@@ -229,7 +224,7 @@ class Bunker extends React.Component {
     };
 
     renderMeasureListItem = (measure) => {
-        let lb = this.buildLeaderboard(measure.ratings, this.state.users_for_bunker)
+        let lb = this.buildLeaderboard(measure.ratings, this.state.users_for_bunker);
         return (
             <Paper color={"grey"}>
                 <Card onClick={() => this.getMeasure(measure._id)} id={measure._id} raised>

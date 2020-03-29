@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button, Form, Grid, Header, Image, Message, Segment, Icon, Modal, Text} from 'semantic-ui-react'
+import {Button, Form, Grid, Header, Image, Message, Segment, Icon, Modal} from 'semantic-ui-react'
 
 
 class Login extends React.Component {
@@ -44,10 +44,6 @@ class Login extends React.Component {
                                             placeholder='Password'
                                             type='password'
                                         />
-
-                                        {/*<Button color='teal' fluid size='large'>*/}
-                                        {/*    Login*/}
-                                        {/*</Button>*/}
 
                                     </Segment>
                                 </Form>
