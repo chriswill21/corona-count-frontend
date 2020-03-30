@@ -23,6 +23,9 @@ function App() {
         <Router>
             <div>
                 <Switch>
+                    <Route path='/'>
+                        < Redirect to={"/start"}/>)}/>
+                    </Route>
                     <Route path='/home' render={(props) => (isAuthenticated ? <RetrieveProfileGoHome {...props}/> :
                         < Redirect to={"/start"}/>)}/>
                     <Route path='/login'
