@@ -275,7 +275,8 @@ class Measure extends React.Component {
                                 </Container>
                             </MUI_Grid>
                             <MUI_Grid item xs={2}>
-                                <Button variant='contained' size={'large'} color={'primary'} onClick={this.__onSubmitDeltaClick}>Submit</Button>
+                                <Button variant='contained' size={'large'} color={'primary'}
+                                        onClick={this.__onSubmitDeltaClick}>Submit</Button>
                             </MUI_Grid>
                         </MUI_Grid>
                         <Divider/>
@@ -382,19 +383,20 @@ class Measure extends React.Component {
                                     <Menu fixed='top' color={'#581845'} inverted borderless>
                                         <Container>
                                             <Menu.Item position={"left"}>
-                                                <Dropdown item icon='arrow circle left' text={this.state.user_obj.name} simple>
+                                                <Dropdown item
+                                                          icon=''
+                                                          text={<span><Icon name={'arrow left'}/>&nbsp;&nbsp;{this.state.user_obj == null ? "" : this.state.user_obj.name}</span>}
+                                                          simple>
                                                     <Dropdown.Menu style={{background: "#5c5c5c"}}>
-                                                        <Dropdown.Item>
-                                                            <Typography onClick={this.setGoBack}
-                                                                        variant={'button'}
-                                                                        color={'textPrimary'}
+                                                        <Dropdown.Item onClick={this.setGoBack}>
+                                                            <Typography
+                                                                variant={'button'}
+                                                                color={'textPrimary'}
                                                             >
                                                                 Back to bunker
                                                             </Typography>
                                                         </Dropdown.Item>
-                                                        <Dropdown.Item>
-                                                            <LogoutButton/>
-                                                        </Dropdown.Item>
+                                                        <LogoutButton/>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </Menu.Item>

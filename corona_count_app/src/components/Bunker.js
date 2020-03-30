@@ -299,19 +299,20 @@ class Bunker extends React.Component {
                                     <Menu fixed='top' inverted borderless>
                                         <Container>
                                             <Menu.Item position={"left"}>
-                                                <Dropdown item icon='arrow circle left' text={this.state.user_obj.name} simple>
+                                                <Dropdown item
+                                                          icon=''
+                                                          text={<span><Icon name={'arrow left'}/>&nbsp;&nbsp;{this.state.user_obj == null ? "" : this.state.user_obj.name}</span>}
+                                                          simple>
                                                     <Dropdown.Menu style={{background: "#5c5c5c"}}>
-                                                        <Dropdown.Item>
-                                                            <Typography onClick={this.setGoBack}
-                                                                        variant={'button'}
-                                                                        color={'textPrimary'}
+                                                        <Dropdown.Item onClick={this.setGoBack}>
+                                                            <Typography
+                                                                variant={'button'}
+                                                                color={'textPrimary'}
                                                             >
                                                                 Back to home
                                                             </Typography>
                                                         </Dropdown.Item>
-                                                        <Dropdown.Item>
-                                                            <LogoutButton/>
-                                                        </Dropdown.Item>
+                                                        <LogoutButton/>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </Menu.Item>
@@ -323,7 +324,8 @@ class Bunker extends React.Component {
                                             </Menu.Item>
 
                                             <Menu.Item position={"right"}>
-                                                <Dropdown item icon='align justify' position={'right'} simple>
+                                                <Dropdown item icon='align justify' position={'right'} simple
+                                                          direction={'left'}>
                                                     <Dropdown.Menu style={{background: "#5c5c5c"}}>
                                                         <Dropdown.Item>
                                                             <Typography
@@ -416,7 +418,6 @@ class Bunker extends React.Component {
                                         </MUI_Grid>
                                     </MUI_Grid>
                                 </MUI_Grid>
-                                {/*</Container>*/}
                             </SUI_Grid.Row>
                         </SUI_Grid>
                     </ThemeProvider>

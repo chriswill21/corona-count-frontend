@@ -27,7 +27,6 @@ class Home extends React.Component {
     state = {
         bunkers: [],
         user_obj: null,
-        user_name: null,
         user_id: null,
         add_bunker_tab: 0,
         join_bunker_error: false,
@@ -125,7 +124,6 @@ class Home extends React.Component {
             this.postNewUser(user);
         }
 
-        this.setState({user_name: user.name});
         this.setState({user_id: id.toString()});
         this.setState({user_obj: user})
     }
@@ -197,7 +195,9 @@ class Home extends React.Component {
             const response =
                 await axios.post(url);
             console.log("Successfully updated username: ", response.success);
-            this.setState({update_username_text: ""});
+            const new_user_obj = {...this.state.user_obj};
+            new_user_obj.name = this.state.update_username_text;
+            this.setState({update_username_text: "", user_obj: new_user_obj});
         } catch (e) {
             console.log("Error updating username: ", e.response)
         }
@@ -317,6 +317,7 @@ class Home extends React.Component {
                 <List.Content>
                     <List.Header>
                         <Typography component='a'
+                                    variant={'h6'}
                                     onClick={() => {
                                         this.setRedirect(bunker).then()
                                     }}
@@ -326,7 +327,7 @@ class Home extends React.Component {
                     </List.Header>
                     <List.Description>
                         <Typography component='a'
-                                    variant={'caption'}
+                                    variant={'body1'}
                                     onClick={() => {
                                         this.handleLeaveBunkerClickOpen(bunker._id)
                                     }}
@@ -390,22 +391,25 @@ class Home extends React.Component {
                                     <Menu fixed='top' inverted borderless>
                                         <Container>
                                             <Menu.Item position={"left"}>
-                                                <Dropdown item icon='align justify' text={this.state.user_name} simple>
+                                                <Dropdown item
+                                                          icon=''
+                                                          text={<span><Icon name={'align justify'}/>&nbsp;&nbsp;{this.state.user_obj == null ? "" : this.state.user_obj.name}</span>}
+                                                          simple>
                                                     <Dropdown.Menu style={{background: '#5c5c5c'}}>
-                                                        <Dropdown.Item>
+                                                        <Dropdown.Item
+                                                            onClick={() => this.setState({updating_username: true})}>
                                                             <Typography
-                                                                onClick={() => this.setState({updating_username: true})}
                                                                 variant={'button'}
                                                                 color={'textPrimary'}
                                                             >
                                                                 <Icon name={'pencil alternate'}/>Update name...
                                                             </Typography>
                                                         </Dropdown.Item>
-                                                        <Dropdown.Item>
+                                                        <Dropdown.Item onClick={() => this.setState({help: true})}>
                                                             <div>
-                                                                <Typography onClick={() => this.setState({help: true})}
-                                                                            variant={'button'}
-                                                                            color={'textPrimary'}
+                                                                <Typography
+                                                                    variant={'button'}
+                                                                    color={'textPrimary'}
                                                                 ><Icon name={'question'}/> Help</Typography>
                                                             </div>
                                                         </Dropdown.Item>
@@ -444,9 +448,7 @@ class Home extends React.Component {
                                                                 </Button>
                                                             </DialogActions>
                                                         </Dialog>
-                                                        <Dropdown.Item>
-                                                            <LogoutButton/>
-                                                        </Dropdown.Item>
+                                                        <LogoutButton/>
                                                     </Dropdown.Menu>
                                                 </Dropdown>
                                             </Menu.Item>
