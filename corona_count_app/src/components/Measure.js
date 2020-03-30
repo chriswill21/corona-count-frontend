@@ -292,7 +292,7 @@ class Measure extends React.Component {
         let accuser = all_users.filter(entry => entry.user_id === raw_feed_item.accuser_id)[0].name;
         let victim = all_users.filter(entry => entry.user_id === raw_feed_item.victim_id)[0].name;
         let delta = raw_feed_item.delta;
-        let is_verified = raw_feed_item.is_verified || this.state.user_obj.nickname === accuser ? <div></div> :
+        let is_verified = raw_feed_item.is_verified || this.state.user_obj.name === accuser ? <div></div> :
             <Button variant='contained' color={"primary"} onClick={() => this._onVerifyDelta(post_id)}>Verify</Button>;
         let comment = raw_feed_item.comment;
         let initials = null;
