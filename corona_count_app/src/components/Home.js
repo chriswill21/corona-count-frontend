@@ -390,7 +390,7 @@ class Home extends React.Component {
                                     <Menu fixed='top' inverted borderless>
                                         <Container>
                                             <Menu.Item position={"left"}>
-                                                <Dropdown item icon='align justify' simple>
+                                                <Dropdown item icon='align justify' text={this.state.user_name} simple>
                                                     <Dropdown.Menu style={{background: '#5c5c5c'}}>
                                                         <Dropdown.Item>
                                                             <Typography

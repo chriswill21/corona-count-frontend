@@ -299,7 +299,7 @@ class Bunker extends React.Component {
                                     <Menu fixed='top' inverted borderless>
                                         <Container>
                                             <Menu.Item position={"left"}>
-                                                <Dropdown item icon='arrow circle left' simple>
+                                                <Dropdown item icon='arrow circle left' text={this.state.user_obj.name} simple>
                                                     <Dropdown.Menu style={{background: "#5c5c5c"}}>
                                                         <Dropdown.Item>
                                                             <Typography onClick={this.setGoBack}
