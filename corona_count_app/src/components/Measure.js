@@ -217,7 +217,6 @@ class Measure extends React.Component {
     // Component render functions
 
     postEventCard = () => {
-        console.log(this.state.users);
         return (
             <Feed.Event>
                 <Feed.Content>
