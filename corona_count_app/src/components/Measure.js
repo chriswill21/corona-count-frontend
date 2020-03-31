@@ -91,7 +91,6 @@ class Measure extends React.Component {
     componentDidMount() {
         const endpoint = this.state.endpoint;
         const socket = socketIOClient(endpoint);
-        console.log("Measure id: ", this.state.measure_id);
         socket.on(`${this.state.measure_id}`, data => {
             console.log(`received emission: ${this.state.measure_id}`);
             this.setState({raw_feed: data})
