@@ -51,7 +51,7 @@ class Measure extends React.Component {
         user_being_rated_comment: "",
         user_being_rated_delta: 0,
         snackbar_open: false,
-        endpoint: "https://corona-count-19.herokuapp.com:4000",
+        endpoint: "https://corona-count-19.herokuapp.com",
         viewing_leaderboard: false,
         theme: this.props.theme
     };
@@ -81,7 +81,7 @@ class Measure extends React.Component {
             user_being_rated_comment: "",
             user_being_rated_delta: 0,
             snackbar_open: false,
-            endpoint: "https://corona-count-19.herokuapp.com:4000",
+            endpoint: "https://corona-count-19.herokuapp.com",
             theme: this.props.theme
         };
 
