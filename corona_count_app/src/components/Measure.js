@@ -91,7 +91,7 @@ class Measure extends React.Component {
     componentDidMount() {
         const endpoint = this.state.endpoint;
         const socket = socketIOClient(endpoint);
-        socket.on("new_post", data => {
+        socket.on(this.state.measure_id, data => {
             this.setState({raw_feed: data})
         });
         socket.on("verified_post", data => {

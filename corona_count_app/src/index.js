@@ -17,8 +17,7 @@ const onRedirectCallback = appState => {
   );
 };
 
-// ReactDOM.render(<App />, document.getElementById('root'));
-// //TODO: Note that the redirect_uri below is where you set the redirect location for AFTER you've been authenticated
+//TODO: Note that the redirect_uri below is where you set the redirect location for AFTER you've been authenticated
 ReactDOM.render(
   <Auth0Provider
     domain={config.domain}
