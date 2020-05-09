@@ -91,6 +91,7 @@ class Measure extends React.Component {
     }
 
     componentDidMount() {
+        console.log("we there")
         const endpoint = this.state.endpoint;
         const socket = socketIOClient(endpoint);
         socket.on(`${this.state.measure_id}`, data => {
@@ -140,6 +141,7 @@ class Measure extends React.Component {
         let comment = top_5_comments.join('. ').split(" ").join("+")
         let url = this.state.sentiment_endpoint + comment
 
+        console.log("in dehhh")
         const Http = new XMLHttpRequest();
         Http.open("GET", url);
         Http.send();
