@@ -47,12 +47,10 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         let user = this.props.user;
-        console.log("user", user);
         this.getUserData(user).then(r => console.log("User data retrieved:", r))
     }
 
     async setRedirect(bunker) {
-        console.log("clicked on a bunker", bunker);
         let url = config.bunkers_url + "/users/" + bunker._id;
         url = encodeURI(url);
         console.log('Get users from bunker url: ', url);

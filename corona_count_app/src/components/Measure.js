@@ -93,7 +93,8 @@ class Measure extends React.Component {
     componentDidMount() {
         const endpoint = this.state.endpoint;
         const socket = socketIOClient(endpoint);
-        socket.on(this.state.measure_id, data => {
+        socket.on(`${this.state.measure_id}`, data => {
+            console.log(`received emission: ${this.state.measure_id}`);
             this.setState({raw_feed: data})
             this.run_sentiment_analysis()
         });
@@ -233,7 +234,6 @@ class Measure extends React.Component {
     // Component render functions
 
     postEventCard = () => {
-        console.log(this.state.users);
         return (
             <Feed.Event>
                 <Feed.Content>
