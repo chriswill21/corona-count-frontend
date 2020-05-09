@@ -53,7 +53,8 @@ class Measure extends React.Component {
         snackbar_open: false,
         endpoint: "https://corona-count-19.herokuapp.com",
         viewing_leaderboard: false,
-        theme: this.props.theme
+        theme: this.props.theme,
+        sentiment_endpoint: null,
     };
 
     columns = [
@@ -82,7 +83,8 @@ class Measure extends React.Component {
             user_being_rated_delta: 0,
             snackbar_open: false,
             endpoint: "https://corona-count-19.herokuapp.com",
-            theme: this.props.theme
+            theme: this.props.theme,
+            sentiment_endpoint: "http://127.0.0.1:5000/?comment="
         };
 
         this.getFeed(this.state.measure_id).then()
@@ -93,6 +95,7 @@ class Measure extends React.Component {
         const socket = socketIOClient(endpoint);
         socket.on(this.state.measure_id, data => {
             this.setState({raw_feed: data})
+            this.run_sentiment_analysis()
         });
         socket.on("verified_post", data => {
             this.setState({
@@ -130,6 +133,19 @@ class Measure extends React.Component {
         });
         return feed
     };
+
+    run_sentiment_analysis = () => {
+        let top_5_comments = this.state.feed.splice(0, 5)
+        let comment = top_5_comments.join('. ').split(" ").join("+")
+        let url = this.state.sentiment_endpoint + comment
+
+        const Http = new XMLHttpRequest();
+        Http.open("GET", url);
+        Http.send();
+        Http.onreadystatechange = (e) => {
+            console.log(Http.responseText)
+        }
+    }
 
 
     // On click functions
