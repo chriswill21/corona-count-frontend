@@ -137,7 +137,8 @@ class Measure extends React.Component {
 
     run_sentiment_analysis = () => {
         let top_5_comments = this.state.feed.splice(0, 5)
-        let comment = top_5_comments.join('. ').split(" ").join("+")
+        let comment = top_5_comments.join('. ') //.split(" ").join("+")
+        comment = encodeURI(comment)
         let url = this.state.sentiment_endpoint + comment
         const Http = new XMLHttpRequest();
         Http.open("GET", url);
